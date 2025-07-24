@@ -4,8 +4,14 @@ class SimpleGranularProcessor extends AudioWorkletProcessor {
     this.port.onmessage = (e) => {
       const samples = new Float32Array(e.data.buffer)
       this.samples = samples
+      this.grains.forEach((grain) => grain.init(this.samples, this.grainSize))
     }
-    this.cursor = 0
+
+    this.numOfGrains = 8
+    this.grainSize = 2000 // ~45ms at 44.1kHz
+    this.grains = Array(this.numOfGrains)
+      .fill()
+      .map((i) => new Grain(i))
   }
   static get parameterDescriptors() {
     return [{ name: 'noiseGain', defaultValue: 0.1 }]
@@ -18,20 +24,47 @@ class SimpleGranularProcessor extends AudioWorkletProcessor {
     const rightChannel = output[1]
 
     for (let i = 0; i < leftChannel.length; i++) {
-      if (this.cursor >= this.samples.length) {
-        this.cursor = 0 // loop back to start
-      }
+      leftChannel[i] = 0
+      if (rightChannel) rightChannel[i] = 0
 
-      const sample = this.samples[Math.floor(this.cursor)]
-      leftChannel[i] = sample
-      if (rightChannel) {
-        rightChannel[i] = sample
+      for (let grainIndex = 0; grainIndex < this.numOfGrains; grainIndex++) {
+        const grain = this.grains[grainIndex]
+        const sample = grain.process() / this.numOfGrains
+        leftChannel[i] += sample
+        if (rightChannel) {
+          rightChannel[i] += sample
+        }
       }
-
-      this.cursor += 2.3
     }
 
     return true
+  }
+}
+
+class Grain {
+  constructor(i) {
+    this.i = i
+    this.vel = 0.2 + Math.random() * 0.6 // 0.2 to 0.8 speed
+  }
+
+  init(samples, grainSize) {
+    this.samples = samples
+    this.cursor = Math.floor(Math.random() * this.samples.length)
+    this.grainSize = grainSize
+  }
+
+  process() {
+    if (!this.samples) return 0
+
+    // Handle boundaries
+    if (this.cursor >= this.samples.length || this.cursor < 0) {
+      this.init(this.samples, this.grainSize)
+    }
+
+    const sample = this.samples[Math.floor(this.cursor)]
+    this.cursor += this.vel
+
+    return sample
   }
 }
 
