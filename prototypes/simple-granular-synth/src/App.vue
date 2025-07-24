@@ -3,9 +3,12 @@ import { ref } from 'vue'
 
 const fileName = ref<string>('')
 const isDragging = ref(false)
+const grainSize = ref(2000) // samples
+const numGrains = ref(8)
+const playbackSpeed = ref(0.5)
 
 let context: AudioContext | null = null
-let sourceNode: AudioBufferSourceNode | null = null
+let granularNode: AudioWorkletNode | null = null
 
 const handleDragOver = (e: DragEvent) => {
   e.preventDefault()
@@ -34,18 +37,15 @@ const handleDrop = async (e: DragEvent) => {
 const loadAndPlayAudioFile = async (file: File) => {
   try {
     fileName.value = file.name
-    // Stop current playback if any
-    if (sourceNode) {
-      sourceNode.stop()
-      sourceNode = null
-    }
 
     // Initialize audio context on first drop
     if (!context) {
       context = new AudioContext()
       await context.audioWorklet.addModule('simple-granular-processor.js')
     }
-    const granularNode = new AudioWorkletNode(context, 'simple-granular-processor')
+    
+    // Create new granular node
+    granularNode = new AudioWorkletNode(context, 'simple-granular-processor')
     granularNode.connect(context.destination)
 
     // Load and decode audio file
@@ -53,10 +53,41 @@ const loadAndPlayAudioFile = async (file: File) => {
     const audioBuffer = await context.decodeAudioData(arrayBuffer)
     const channelData = audioBuffer.getChannelData(0) // Float32Array
     const buffer = channelData.buffer
-    granularNode.port.postMessage({ buffer })
+    
+    // Send initial parameters
+    granularNode.port.postMessage({ 
+      buffer,
+      grainSize: grainSize.value,
+      numGrains: numGrains.value,
+      playbackSpeed: playbackSpeed.value
+    })
   } catch (error) {
     console.error('Error loading audio file:', error)
     alert('Error loading audio file. Please try a different file.')
+  }
+}
+
+const onGrainSizeInput = (e: Event) => {
+  const value = parseInt((e.target as HTMLInputElement).value)
+  grainSize.value = value
+  if (granularNode) {
+    granularNode.port.postMessage({ grainSize: value })
+  }
+}
+
+const onNumGrainsInput = (e: Event) => {
+  const value = parseInt((e.target as HTMLInputElement).value)
+  numGrains.value = value
+  if (granularNode) {
+    granularNode.port.postMessage({ numGrains: value })
+  }
+}
+
+const onPlaybackSpeedInput = (e: Event) => {
+  const value = parseFloat((e.target as HTMLInputElement).value)
+  playbackSpeed.value = value
+  if (granularNode) {
+    granularNode.port.postMessage({ playbackSpeed: value })
   }
 }
 </script>
@@ -85,6 +116,50 @@ const loadAndPlayAudioFile = async (file: File) => {
         </svg>
         <p v-if="!fileName">Drop an audio file here</p>
         <p v-else class="file-name">{{ fileName }}</p>
+      </div>
+    </div>
+    
+    <div v-if="fileName" class="controls">
+      <div class="control-group">
+        <label>
+          Grain Size: {{ Math.round(grainSize / 44.1) }}ms
+          <input
+            type="range"
+            min="100"
+            max="5000"
+            step="100"
+            :value="grainSize"
+            @input="onGrainSizeInput"
+          />
+        </label>
+      </div>
+      
+      <div class="control-group">
+        <label>
+          Number of Grains: {{ numGrains }}
+          <input
+            type="range"
+            min="1"
+            max="32"
+            step="1"
+            :value="numGrains"
+            @input="onNumGrainsInput"
+          />
+        </label>
+      </div>
+      
+      <div class="control-group">
+        <label>
+          Playback Speed: {{ playbackSpeed.toFixed(2) }}x
+          <input
+            type="range"
+            min="0.1"
+            max="2"
+            step="0.01"
+            :value="playbackSpeed"
+            @input="onPlaybackSpeedInput"
+          />
+        </label>
       </div>
     </div>
   </div>
@@ -149,5 +224,18 @@ label {
 input[type='range'] {
   width: 300px;
   margin-top: 0.5em;
+}
+
+.controls {
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5em;
+  margin-top: 2em;
+}
+
+.control-group {
+  width: 100%;
 }
 </style>

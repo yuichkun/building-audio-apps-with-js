@@ -1,17 +1,42 @@
 class SimpleGranularProcessor extends AudioWorkletProcessor {
   constructor() {
     super()
-    this.port.onmessage = (e) => {
-      const samples = new Float32Array(e.data.buffer)
-      this.samples = samples
-      this.grains.forEach((grain) => grain.init(this.samples, this.grainSize))
-    }
-
     this.numOfGrains = 8
     this.grainSize = 2000 // ~45ms at 44.1kHz
+    this.playbackSpeed = 0.5
     this.grains = Array(this.numOfGrains)
       .fill()
       .map((i) => new Grain(i))
+      
+    this.port.onmessage = (e) => {
+      if (e.data.buffer) {
+        const samples = new Float32Array(e.data.buffer)
+        this.samples = samples
+        this.grains.forEach((grain) => grain.init(this.samples, this.grainSize, this.playbackSpeed))
+      }
+      if (e.data.numGrains !== undefined) {
+        this.updateNumGrains(e.data.numGrains)
+      }
+      if (e.data.grainSize !== undefined) {
+        this.grainSize = e.data.grainSize
+        this.grains.forEach((grain) => grain.grainSize = this.grainSize)
+      }
+      if (e.data.playbackSpeed !== undefined) {
+        this.playbackSpeed = e.data.playbackSpeed
+        this.grains.forEach((grain) => grain.updateSpeed(this.playbackSpeed))
+      }
+    }
+  }
+  
+  updateNumGrains(newNum) {
+    if (newNum === this.numOfGrains) return
+    this.numOfGrains = newNum
+    this.grains = Array(this.numOfGrains)
+      .fill()
+      .map((i) => new Grain(i))
+    if (this.samples) {
+      this.grains.forEach((grain) => grain.init(this.samples, this.grainSize, this.playbackSpeed))
+    }
   }
   static get parameterDescriptors() {
     return [{ name: 'noiseGain', defaultValue: 0.1 }]
@@ -44,13 +69,27 @@ class SimpleGranularProcessor extends AudioWorkletProcessor {
 class Grain {
   constructor(i) {
     this.i = i
-    this.vel = 0.2 + Math.random() * 0.6 // 0.2 to 0.8 speed
+    this.baseSpeed = 0.5
+    this.vel = this.calculateVelocity()
   }
 
-  init(samples, grainSize) {
+  calculateVelocity() {
+    // Add some random variation around base speed
+    const variation = 0.2
+    return this.baseSpeed * (1 - variation + Math.random() * variation * 2)
+  }
+
+  updateSpeed(newSpeed) {
+    this.baseSpeed = newSpeed
+    this.vel = this.calculateVelocity()
+  }
+
+  init(samples, grainSize, playbackSpeed) {
     this.samples = samples
     this.cursor = Math.floor(Math.random() * this.samples.length)
     this.grainSize = grainSize
+    this.baseSpeed = playbackSpeed || 0.5
+    this.vel = this.calculateVelocity()
   }
 
   process() {
