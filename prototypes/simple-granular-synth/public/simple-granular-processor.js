@@ -1,29 +1,36 @@
 class SimpleGranularProcessor extends AudioWorkletProcessor {
   constructor() {
     super()
+    this.port.onmessage = (e) => {
+      const samples = new Float32Array(e.data.buffer)
+      this.samples = samples
+    }
+    this.cursor = 0
   }
   static get parameterDescriptors() {
-    return [{ name: 'noiseGain', defaultValue: 0.01 }]
+    return [{ name: 'noiseGain', defaultValue: 0.1 }]
   }
   process(inputs, outputs, parameters) {
-    // console.log('process:', inputs, outputs, parameters)
-    const input = inputs[0]
     const output = outputs[0]
-    if (!input || !output) return true
-    const leftInputCh = input[0]
-    const leftOutputCh = output[0]
-    const rightOutputCh = output[1]
-    if (!leftInputCh || !leftOutputCh) return true
-    const noiseGain = parameters.noiseGain
-    for (let i = 0; i < leftInputCh.length; i++) {
-      const original = leftInputCh[i]
-      const noise = Math.random() - 0.5 // -0.5 to 0.5
-      const noiseAmp = noiseGain.length === 1 ? noiseGain[0] : noiseGain[i]
-      const sample = original + noise * noiseAmp
-      // mono write
-      leftOutputCh[i] = sample
-      rightOutputCh[i] = sample
+    if (!output || !output[0] || !this.samples) return true
+
+    const leftChannel = output[0]
+    const rightChannel = output[1]
+
+    for (let i = 0; i < leftChannel.length; i++) {
+      if (this.cursor >= this.samples.length) {
+        this.cursor = 0 // loop back to start
+      }
+
+      const sample = this.samples[Math.floor(this.cursor)]
+      leftChannel[i] = sample
+      if (rightChannel) {
+        rightChannel[i] = sample
+      }
+
+      this.cursor += 2.3
     }
+
     return true
   }
 }

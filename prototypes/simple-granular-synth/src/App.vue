@@ -1,21 +1,11 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 
-const noiseGain = ref(0.01)
 const fileName = ref<string>('')
 const isDragging = ref(false)
 
-let granularNode: AudioWorkletNode | null = null
 let context: AudioContext | null = null
 let sourceNode: AudioBufferSourceNode | null = null
-
-const onNoiseGainInput = (e: Event) => {
-  const value = parseFloat((e.target as HTMLInputElement).value)
-  noiseGain.value = value
-  if (granularNode && context) {
-    granularNode.parameters.get('noiseGain')?.setValueAtTime(value, context.currentTime)
-  }
-}
 
 const handleDragOver = (e: DragEvent) => {
   e.preventDefault()
@@ -43,6 +33,7 @@ const handleDrop = async (e: DragEvent) => {
 
 const loadAndPlayAudioFile = async (file: File) => {
   try {
+    fileName.value = file.name
     // Stop current playback if any
     if (sourceNode) {
       sourceNode.stop()
@@ -53,21 +44,16 @@ const loadAndPlayAudioFile = async (file: File) => {
     if (!context) {
       context = new AudioContext()
       await context.audioWorklet.addModule('simple-granular-processor.js')
-      granularNode = new AudioWorkletNode(context, 'simple-granular-processor')
-      granularNode.connect(context.destination)
     }
+    const granularNode = new AudioWorkletNode(context, 'simple-granular-processor')
+    granularNode.connect(context.destination)
 
     // Load and decode audio file
     const arrayBuffer = await file.arrayBuffer()
     const audioBuffer = await context.decodeAudioData(arrayBuffer)
-    fileName.value = file.name
-
-    // Create and play source
-    sourceNode = context.createBufferSource()
-    sourceNode.buffer = audioBuffer
-    sourceNode.loop = true
-    sourceNode.connect(granularNode!)
-    sourceNode.start()
+    const channelData = audioBuffer.getChannelData(0) // Float32Array
+    const buffer = channelData.buffer
+    granularNode.port.postMessage({ buffer })
   } catch (error) {
     console.error('Error loading audio file:', error)
     alert('Error loading audio file. Please try a different file.')
@@ -100,20 +86,6 @@ const loadAndPlayAudioFile = async (file: File) => {
         <p v-if="!fileName">Drop an audio file here</p>
         <p v-else class="file-name">{{ fileName }}</p>
       </div>
-    </div>
-
-    <div style="margin-top: 1em">
-      <label>
-        noiseGain: {{ noiseGain }}
-        <input
-          type="range"
-          min="0"
-          max="1"
-          step="0.001"
-          :value="noiseGain"
-          @input="onNoiseGainInput"
-        />
-      </label>
     </div>
   </div>
 </template>
