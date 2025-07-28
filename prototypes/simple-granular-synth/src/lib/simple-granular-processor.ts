@@ -64,11 +64,11 @@ class SimpleGranularProcessor extends AudioWorkletProcessor {
 
     for (let sampleIndex = 0; sampleIndex < leftChannel.length; sampleIndex++) {
       // Remove dead grains and replenish immediately
-      this.grains = this.grains.filter(grain => !grain.hasDied)
+      this.grains = this.grains.filter((grain) => !grain.hasDied)
       this.replenishGrains()
-      
+
       for (const grain of this.grains) {
-        const sample = grain.process() / this.numOfGrains
+        const sample = grain.process() / Math.sqrt(this.numOfGrains)
         leftChannel[sampleIndex] += sample
         if (rightChannel) {
           rightChannel[sampleIndex] += sample
