@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import processorUrl from './lib/simple-granular-processor.js?worker&url'
 
 const fileName = ref<string>('')
 const isDragging = ref(false)
@@ -41,9 +42,9 @@ const loadAndPlayAudioFile = async (file: File) => {
     // Initialize audio context on first drop
     if (!context) {
       context = new AudioContext()
-      await context.audioWorklet.addModule('simple-granular-processor.js')
+      await context.audioWorklet.addModule(processorUrl)
     }
-    
+
     // Create new granular node
     granularNode = new AudioWorkletNode(context, 'simple-granular-processor')
     granularNode.connect(context.destination)
@@ -53,13 +54,13 @@ const loadAndPlayAudioFile = async (file: File) => {
     const audioBuffer = await context.decodeAudioData(arrayBuffer)
     const channelData = audioBuffer.getChannelData(0) // Float32Array
     const buffer = channelData.buffer
-    
+
     // Send initial parameters
-    granularNode.port.postMessage({ 
+    granularNode.port.postMessage({
       buffer,
       grainSize: grainSize.value,
       numGrains: numGrains.value,
-      playbackSpeed: playbackSpeed.value
+      playbackSpeed: playbackSpeed.value,
     })
   } catch (error) {
     console.error('Error loading audio file:', error)
@@ -118,7 +119,7 @@ const onPlaybackSpeedInput = (e: Event) => {
         <p v-else class="file-name">{{ fileName }}</p>
       </div>
     </div>
-    
+
     <div v-if="fileName" class="controls">
       <div class="control-group">
         <label>
@@ -133,7 +134,7 @@ const onPlaybackSpeedInput = (e: Event) => {
           />
         </label>
       </div>
-      
+
       <div class="control-group">
         <label>
           Number of Grains: {{ numGrains }}
@@ -147,7 +148,7 @@ const onPlaybackSpeedInput = (e: Event) => {
           />
         </label>
       </div>
-      
+
       <div class="control-group">
         <label>
           Playback Speed: {{ playbackSpeed.toFixed(2) }}x
