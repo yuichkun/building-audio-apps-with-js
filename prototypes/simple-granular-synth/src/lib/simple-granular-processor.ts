@@ -1,9 +1,11 @@
+import { Grain } from './grain'
+
 class SimpleGranularProcessor extends AudioWorkletProcessor {
   numOfGrains: number
   grainSize: number
   playbackSpeed: number
   grains: Grain[]
-  samples: Float32Array
+  samples: Float32Array | null
   constructor() {
     super()
     this.numOfGrains = 8
@@ -12,13 +14,13 @@ class SimpleGranularProcessor extends AudioWorkletProcessor {
     this.grains = Array(this.numOfGrains)
       .fill(null)
       .map((i) => new Grain(i))
-    this.samples = new Float32Array()
+    this.samples = null
 
     this.port.onmessage = (e) => {
       if (e.data.buffer) {
         const samples = new Float32Array(e.data.buffer)
         this.samples = samples
-        this.grains.forEach((grain) => grain.init(this.samples, this.grainSize, this.playbackSpeed))
+        this.grains.forEach((grain) => grain.init(samples, this.grainSize, this.playbackSpeed))
       }
       if (e.data.numGrains !== undefined) {
         this.updateNumGrains(e.data.numGrains)
@@ -36,14 +38,16 @@ class SimpleGranularProcessor extends AudioWorkletProcessor {
 
   updateNumGrains(newNum: number) {
     if (newNum === this.numOfGrains) return
+    if (this.samples === null) return
     this.numOfGrains = newNum
-    this.grains = Array(this.numOfGrains)
+    this.grains = Array(newNum)
       .fill(null)
       .map((i) => new Grain(i))
     if (this.samples) {
-      this.grains.forEach((grain) => grain.init(this.samples, this.grainSize, this.playbackSpeed))
+      this.grains.forEach((grain) => grain.init(this.samples!, this.grainSize, this.playbackSpeed))
     }
   }
+
   static get parameterDescriptors() {
     return [{ name: 'noiseGain', defaultValue: 0.1 }]
   }
@@ -58,71 +62,38 @@ class SimpleGranularProcessor extends AudioWorkletProcessor {
     const leftChannel = output[0]
     const rightChannel = output[1]
 
-    for (let i = 0; i < leftChannel.length; i++) {
-      leftChannel[i] = 0
-      if (rightChannel) rightChannel[i] = 0
-
-      for (let grainIndex = 0; grainIndex < this.numOfGrains; grainIndex++) {
-        const grain = this.grains[grainIndex]
+    this.replenishGrains()
+    const grainsToRemove: Grain[] = []
+    for (let sampleIndex = 0; sampleIndex < leftChannel.length; sampleIndex++) {
+      for (const grain of this.grains) {
         const sample = grain.process() / this.numOfGrains
-        leftChannel[i] += sample
+        if (grain.hasDied) {
+          grainsToRemove.push(grain)
+        }
+        leftChannel[sampleIndex] += sample
         if (rightChannel) {
-          rightChannel[i] += sample
+          rightChannel[sampleIndex] += sample
         }
       }
     }
 
+    // Remove dead grains after processing
+    this.removeGrains(grainsToRemove)
+
     return true
   }
-}
-
-class Grain {
-  i: number
-  baseSpeed: number
-  vel: number
-  samples: Float32Array
-  cursor: number
-  grainSize: number
-  constructor(i: number) {
-    this.i = i
-    this.baseSpeed = 0.5
-    this.vel = this.calculateVelocity()
-    this.samples = new Float32Array()
-    this.cursor = 0
-    this.grainSize = 0
-  }
-
-  calculateVelocity() {
-    // Add some random variation around base speed
-    const variation = 0.2
-    return this.baseSpeed * (1 - variation + Math.random() * variation * 2)
-  }
-
-  updateSpeed(newSpeed: number) {
-    this.baseSpeed = newSpeed
-    this.vel = this.calculateVelocity()
-  }
-
-  init(samples: Float32Array, grainSize: number, playbackSpeed?: number) {
-    this.samples = samples
-    this.cursor = Math.floor(Math.random() * this.samples.length)
-    this.grainSize = grainSize
-    this.baseSpeed = playbackSpeed ?? 0.5
-    this.vel = this.calculateVelocity()
-  }
-
-  process() {
-    if (!this.samples) return 0
-
-    // Handle boundaries
-    if (this.cursor >= this.samples.length || this.cursor < 0) {
-      this.init(this.samples, this.grainSize)
+  replenishGrains() {
+    if (!this.samples) return
+    while (this.grains.length < this.numOfGrains) {
+      const newGrain = new Grain(this.grains.length)
+      newGrain.init(this.samples, this.grainSize, this.playbackSpeed)
+      this.grains.push(newGrain)
     }
-
-    const sample = this.samples[Math.floor(this.cursor)]
-    this.cursor += this.vel
-
-    return sample
+  }
+  removeGrains(grainsToRemove: Grain[]) {
+    if (grainsToRemove.length > 0) {
+      this.grains = this.grains.filter((grain) => !grainsToRemove.includes(grain))
+    }
   }
 }
 
