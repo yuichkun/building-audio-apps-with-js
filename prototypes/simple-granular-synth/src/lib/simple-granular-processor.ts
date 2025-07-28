@@ -7,7 +7,7 @@ class SimpleGranularProcessor extends AudioWorkletProcessor {
     this.grains = Array(this.numOfGrains)
       .fill()
       .map((i) => new Grain(i))
-      
+
     this.port.onmessage = (e) => {
       if (e.data.buffer) {
         const samples = new Float32Array(e.data.buffer)
@@ -19,7 +19,7 @@ class SimpleGranularProcessor extends AudioWorkletProcessor {
       }
       if (e.data.grainSize !== undefined) {
         this.grainSize = e.data.grainSize
-        this.grains.forEach((grain) => grain.grainSize = this.grainSize)
+        this.grains.forEach((grain) => (grain.grainSize = this.grainSize))
       }
       if (e.data.playbackSpeed !== undefined) {
         this.playbackSpeed = e.data.playbackSpeed
@@ -27,7 +27,7 @@ class SimpleGranularProcessor extends AudioWorkletProcessor {
       }
     }
   }
-  
+
   updateNumGrains(newNum) {
     if (newNum === this.numOfGrains) return
     this.numOfGrains = newNum
