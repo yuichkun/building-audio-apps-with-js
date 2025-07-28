@@ -38,15 +38,25 @@ export class Grain {
 
   process() {
     if (!this.samples) return 0
+    this.processedSamples++
 
     // Handle boundaries
     if (this.cursor >= this.samples.length || this.cursor < 0) {
       this.init(this.samples, this.grainSize)
     }
 
-    const sample = this.samples[Math.floor(this.cursor)]
+    // Apply Hann window envelope for smooth fade-in and fade-out
+    const progress = this.processedSamples / this.grainSize
+    let amp = 1
+    const fadeRatio = 0.9 // 20% fade on each side
+    if (progress < fadeRatio / 2) {
+      amp = 0.5 * (1 - Math.cos((2 * Math.PI * progress) / fadeRatio))
+    } else if (progress > 1 - fadeRatio / 2) {
+      amp = 0.5 * (1 + Math.cos((2 * Math.PI * (progress - 1)) / fadeRatio))
+    }
+
+    const sample = this.samples[Math.floor(this.cursor)] * amp
     this.cursor += this.vel
-    this.processedSamples++
 
     return sample
   }
