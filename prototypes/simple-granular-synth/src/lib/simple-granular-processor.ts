@@ -62,23 +62,19 @@ class SimpleGranularProcessor extends AudioWorkletProcessor {
     const leftChannel = output[0]
     const rightChannel = output[1]
 
-    this.replenishGrains()
-    const grainsToRemove: Grain[] = []
     for (let sampleIndex = 0; sampleIndex < leftChannel.length; sampleIndex++) {
+      // Remove dead grains and replenish immediately
+      this.grains = this.grains.filter(grain => !grain.hasDied)
+      this.replenishGrains()
+      
       for (const grain of this.grains) {
         const sample = grain.process() / this.numOfGrains
-        if (grain.hasDied) {
-          grainsToRemove.push(grain)
-        }
         leftChannel[sampleIndex] += sample
         if (rightChannel) {
           rightChannel[sampleIndex] += sample
         }
       }
     }
-
-    // Remove dead grains after processing
-    this.removeGrains(grainsToRemove)
 
     return true
   }
@@ -88,11 +84,6 @@ class SimpleGranularProcessor extends AudioWorkletProcessor {
       const newGrain = new Grain(this.grains.length)
       newGrain.init(this.samples, this.grainSize, this.playbackSpeed)
       this.grains.push(newGrain)
-    }
-  }
-  removeGrains(grainsToRemove: Grain[]) {
-    if (grainsToRemove.length > 0) {
-      this.grains = this.grains.filter((grain) => !grainsToRemove.includes(grain))
     }
   }
 }
