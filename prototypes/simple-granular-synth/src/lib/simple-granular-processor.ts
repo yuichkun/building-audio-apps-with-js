@@ -48,6 +48,15 @@ class SimpleGranularProcessor extends AudioWorkletProcessor {
     }
   }
 
+  softClip(x: number): number {
+    const threshold = 0.95
+    if (Math.abs(x) <= threshold) return x
+    return (
+      Math.sign(x) *
+      (threshold + (1 - threshold) * Math.tanh((Math.abs(x) - threshold) / (1 - threshold)))
+    )
+  }
+
   static get parameterDescriptors() {
     return [{ name: 'noiseGain', defaultValue: 0.1 }]
   }
@@ -67,12 +76,19 @@ class SimpleGranularProcessor extends AudioWorkletProcessor {
       this.grains = this.grains.filter((grain) => !grain.hasDied)
       this.replenishGrains()
 
+      let leftSum = 0
+      let rightSum = 0
+
       for (const grain of this.grains) {
         const sample = grain.process() / Math.sqrt(this.numOfGrains)
-        leftChannel[sampleIndex] += sample
-        if (rightChannel) {
-          rightChannel[sampleIndex] += sample
-        }
+        leftSum += sample
+        rightSum += sample
+      }
+
+      // Apply soft limiting to prevent clipping
+      leftChannel[sampleIndex] = this.softClip(leftSum)
+      if (rightChannel) {
+        rightChannel[sampleIndex] = this.softClip(rightSum)
       }
     }
 
