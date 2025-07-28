@@ -46,7 +46,7 @@ export class Grain {
 
     const sample = this.samples[Math.floor(this.cursor)]
     this.cursor += this.vel
-    this.processedSamples += this.vel
+    this.processedSamples++
 
     return sample
   }
