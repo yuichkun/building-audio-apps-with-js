@@ -1,0 +1,88 @@
+{
+  "title": "JavaScriptで作る本番環境対応のオーディオアプリ",
+  "subtitle": "ブラウザでのリアルタイム音声処理",
+  "presenter": "Vue Fes 2025",
+
+  "intro": {
+    "title": "ようこそ",
+    "content": "ウェブ上のオーディオは劇的に進化しました。プロフェッショナルなオーディオアプリケーションの構築方法を探っていきましょう。"
+  },
+
+  "problem": {
+    "title": "課題",
+    "subtitle": "なぜ音声処理は難しいのか?",
+    "point1": "低レイテンシ要件 (<10ms)",
+    "point2": "リアルタイム処理の制約",
+    "point3": "複雑な状態管理",
+    "point4": "パフォーマンスのボトルネック"
+  },
+
+  "webAudio": {
+    "title": "Web Audio API",
+    "subtitle": "ブラウザオーディオの基盤",
+    "intro": "強力なグラフベースの音声処理API",
+    "features": {
+      "title": "主な機能",
+      "modularity": "モジュラー型オーディオノード",
+      "realtime": "リアルタイム処理",
+      "routing": "柔軟なオーディオルーティング",
+      "effects": "組み込みエフェクト＆フィルター"
+    }
+  },
+
+  "worklets": {
+    "title": "Audio Worklets",
+    "subtitle": "オーディオスレッドの制御",
+    "what": "別スレッドでのカスタム音声処理",
+    "why": "メインスレッドの干渉なく一貫したタイミングを保証",
+    "benefit": "真のリアルタイムパフォーマンス"
+  },
+
+  "architecture": {
+    "title": "本番環境アーキテクチャ",
+    "subtitle": "スケーラブルなオーディオアプリの構築",
+    "layer1": "UIレイヤー (Vue/React)",
+    "layer2": "オーディオエンジン (AudioWorklet)",
+    "layer3": "状態管理 (SharedArrayBuffer)",
+    "layer4": "パフォーマンス監視"
+  },
+
+  "challenges": {
+    "title": "よくある落とし穴",
+    "gc": "ガベージコレクションの停止",
+    "buffer": "バッファアンダーラン",
+    "sync": "UIとオーディオの同期",
+    "mobile": "モバイルデバイスの制限"
+  },
+
+  "solutions": {
+    "title": "実証済みソリューション",
+    "preallocate": "オーディオバッファの事前割り当て",
+    "pooling": "GC回避のためのオブジェクトプーリング",
+    "workers": "重い計算にはWeb Workers",
+    "progressive": "モバイル向けのプログレッシブエンハンスメント"
+  },
+
+  "demo": {
+    "title": "ライブデモ",
+    "subtitle": "リアルタイム音声プロセッサを構築しましょう",
+    "step1": "AudioContextのセットアップ",
+    "step2": "AudioWorkletの作成",
+    "step3": "UIへの接続",
+    "step4": "ユーザーインタラクションの処理"
+  },
+
+  "conclusion": {
+    "title": "まとめ",
+    "point1": "リアルタイム処理にはAudioWorkletsを使用",
+    "point2": "オーディオスレッドでGCを避ける",
+    "point3": "パフォーマンスを測定・監視",
+    "point4": "実機での早期テスト"
+  },
+
+  "thanks": {
+    "title": "ありがとうございました!",
+    "questions": "質問はありますか?",
+    "contact": "つながりましょう"
+  }
+}
