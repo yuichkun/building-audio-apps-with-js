@@ -13,5 +13,8 @@
     "@slidev/theme-seriph": "latest",
     "vue": "^3.5.17",
     "vue-i18n": "11.1.12"
+  },
+  "devDependencies": {
+    "@iconify-json/lucide": "1.2.70"
   }
 }
