@@ -81,6 +81,31 @@ class: text-center
 layout: two-cols
 ---
 
+# Test: Sine Wave
+
+test demo
+
+::right::
+
+<SineWavePlayer />
+<LanguageSwitcher />
+
+---
+layout: two-cols
+---
+
+# Test: Chord
+
+test demo
+
+::right::
+<ChordPlayer />
+<LanguageSwitcher />
+
+---
+layout: two-cols
+---
+
 # {{ $t('worklets.title') }}
 
 <div class="text-lg opacity-80 mb-4">{{ $t('worklets.subtitle') }}</div>
