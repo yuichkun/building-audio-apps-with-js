@@ -2,6 +2,7 @@
 import { ref, onMounted } from 'vue'
 import { useAudioDemo } from '../composables/useAudioDemo'
 import AudioDemo from './AudioDemo.vue'
+import SpectrumAnalyzer from './SpectrumAnalyzer.vue'
 
 let audioBuffer: AudioBuffer | null = null
 let filter: BiquadFilterNode | null = null
@@ -91,6 +92,7 @@ onMounted(async () => {
         <input type="range" min="100" max="10000" step="10" :value="frequency" @input="updateFrequency"
           class="w-full" />
       </div>
+      <SpectrumAnalyzer :source="masterGain" />
     </div>
   </AudioDemo>
 </template>
