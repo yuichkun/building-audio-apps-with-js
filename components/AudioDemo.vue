@@ -58,7 +58,7 @@ const emit = defineEmits<{
 
 .volume-controls-wrapper {
   position: absolute;
-  bottom: 0;
+  top: 0;
   left: 0;
 }
 
@@ -85,6 +85,7 @@ const emit = defineEmits<{
 
 .audio-demo-content {
   width: 100%;
+  padding-top: 24x;
   padding-bottom: 48px;
 }
 </style>

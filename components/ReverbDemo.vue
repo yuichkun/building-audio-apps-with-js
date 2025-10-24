@@ -3,6 +3,7 @@ import { ref, onMounted } from 'vue'
 import { useAudioDemo } from '../composables/useAudioDemo'
 import AudioDemo from './AudioDemo.vue'
 import WaveformVisualizer from './WaveformVisualizer.vue'
+// @ts-ignore
 import processorUrl from '../lib/reverb-processor.ts?worker&url'
 
 const fileName = ref<string>('')
@@ -150,7 +151,7 @@ onMounted(async () => {
     const arrayBuffer = await response.arrayBuffer()
     const ctx = new AudioContext()
     audioBuffer = await ctx.decodeAudioData(arrayBuffer)
-    fileName.value = 'sample-snare.wav (default)'
+    fileName.value = 'sample-snare.wav'
     ctx.close() // Close temporary context
   } catch (error) {
     console.warn('Could not load default sample file:', error)
@@ -163,29 +164,26 @@ onMounted(async () => {
     <WaveformVisualizer :source="masterGain" :fullscreen="true" />
 
     <div class="reverb-container">
-      <div class="drop-zone" :class="{ dragging: isDragging }" @dragover="handleDragOver" @dragleave="handleDragLeave"
-        @drop="handleDrop">
-        <div class="drop-content">
-          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-            <polyline points="7 10 12 15 17 10"></polyline>
-            <line x1="12" y1="15" x2="12" y2="3"></line>
-          </svg>
-          <p v-if="!fileName">Drop audio file or click to select</p>
-          <p v-else class="file-name">{{ fileName }}</p>
+      <div class="upper-zone">
+        <div class="drop-zone" :class="{ dragging: isDragging }" @dragover="handleDragOver" @dragleave="handleDragLeave"
+          k @drop="handleDrop">
+          <div class="drop-content">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            <p v-if="!fileName">Drop audio file or click to select</p>
+            <p v-else class="file-name">{{ fileName }}</p>
+          </div>
+          <input type="file" accept="audio/*" @change="handleFileSelect" class="file-input" />
         </div>
-        <input type="file" accept="audio/*" @change="handleFileSelect" class="file-input" />
+        <button @click="triggerSound" class="trigger-button" :disabled="!audioBuffer">
+          Trigger Sound
+        </button>
       </div>
 
-      <div v-if="isPlaying" class="controls">
-        <button
-          @click="triggerSound"
-          class="trigger-button"
-          :disabled="!audioBuffer"
-        >
-          🔊 Trigger Sound
-        </button>
-
+      <div class="controls">
         <div class="control-group">
           <label>
             Wet/Dry: {{ (wetDry * 100).toFixed(0) }}%
@@ -227,6 +225,11 @@ onMounted(async () => {
   width: 100%;
 }
 
+.upper-zone {
+  display: flex;
+  gap: 1rem;
+}
+
 .drop-zone {
   position: relative;
   width: 300px;
@@ -238,7 +241,6 @@ onMounted(async () => {
   justify-content: center;
   transition: all 0.3s ease;
   cursor: pointer;
-  background-color: rgba(250, 250, 250, 0.5);
 }
 
 .drop-zone.dragging {
@@ -255,6 +257,9 @@ onMounted(async () => {
   text-align: center;
   color: #666;
   pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .drop-content svg {
@@ -273,7 +278,7 @@ onMounted(async () => {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  color: #4caf50;
+  color: #42b883;
 }
 
 .file-input {
@@ -301,14 +306,13 @@ onMounted(async () => {
   cursor: pointer;
   border: none;
   color: white;
-  background-color: #10b981;
+  border: 1px solid #42b883;
   transition: all 0.2s ease;
   width: 100%;
 }
 
 .trigger-button:hover:not(:disabled) {
-  background-color: #059669;
-  transform: translateY(-1px);
+  background: #cbcbcb22;
 }
 
 .trigger-button:disabled {
