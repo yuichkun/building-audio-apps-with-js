@@ -261,3 +261,16 @@ image: /public/portrait.jpg
 
 
 <LanguageSwitcher />
+
+---
+layout: image-left
+image: /public/anthony.jpg
+---
+
+# Special Thanks
+
+**Anthony Fu** - a friend from bouldering and creator of [Slidev](https://sli.dev/)
+
+This presentation is powered by Slidev - the only tool that makes sounds and i18n in slides possible!
+
+[antfu.me](https://antfu.me/)
