@@ -9,6 +9,8 @@ class DelayGlitchProcessor extends AudioWorkletProcessor {
   phase: number
   phaseIncrement: number
   delayMs: number
+  frameCounter: number
+  reportInterval: number
 
   constructor() {
     super()
@@ -20,6 +22,10 @@ class DelayGlitchProcessor extends AudioWorkletProcessor {
 
     // Processing delay in milliseconds
     this.delayMs = 0
+
+    // Throttling for sending timing updates
+    this.frameCounter = 0
+    this.reportInterval = 10 // Send timing update every 10 frames
 
     // Handle parameter updates from main thread
     this.port.onmessage = (e) => {
@@ -52,8 +58,14 @@ class DelayGlitchProcessor extends AudioWorkletProcessor {
     const leftChannel = output[0]
     const rightChannel = output[1]
 
-    // Introduce artificial delay BEFORE processing
-    this.artificialDelay(this.delayMs)
+    // Measure actual execution time
+    const startTime = Date.now()
+
+    // Introduce artificial delay INTERMITTENTLY (50% of frames)
+    // This creates glitchy/stuttering sound instead of complete silence
+    if (Math.random() < 0.5) {
+      this.artificialDelay(this.delayMs)
+    }
 
     // Generate sine wave for each sample
     for (let i = 0; i < leftChannel.length; i++) {
@@ -69,6 +81,16 @@ class DelayGlitchProcessor extends AudioWorkletProcessor {
       if (this.phase >= 2 * Math.PI) {
         this.phase -= 2 * Math.PI
       }
+    }
+
+    const endTime = Date.now()
+    const actualTimeMs = endTime - startTime
+
+    // Send timing update to main thread (throttled)
+    this.frameCounter++
+    if (this.frameCounter >= this.reportInterval) {
+      this.port.postMessage({ actualTimeMs })
+      this.frameCounter = 0
     }
 
     return true

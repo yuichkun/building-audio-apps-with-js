@@ -7,6 +7,7 @@ import WaveformVisualizer from './WaveformVisualizer.vue'
 import processorUrl from '../lib/delay-glitch-processor.ts?worker&url'
 
 const delayMs = ref(0)
+const actualTimeMs = ref(0)
 let workletNode: AudioWorkletNode | null = null
 
 const { isPlaying, toggle, masterGain } = useAudioDemo({
@@ -14,6 +15,13 @@ const { isPlaying, toggle, masterGain } = useAudioDemo({
     ctx.audioWorklet.addModule(processorUrl).then(() => {
       workletNode = new AudioWorkletNode(ctx, 'delay-glitch-processor')
       workletNode.connect(destination)
+
+      // Listen for timing updates from processor
+      workletNode.port.onmessage = (e) => {
+        if (e.data.actualTimeMs !== undefined) {
+          actualTimeMs.value = e.data.actualTimeMs
+        }
+      }
 
       // Send initial delay parameter
       workletNode.port.postMessage({
@@ -31,7 +39,7 @@ const onDelayInput = (e: Event) => {
   }
 }
 
-const isOverBudget = () => delayMs.value > 3
+const isOverBudget = () => actualTimeMs.value > 3
 </script>
 
 <template>
@@ -41,13 +49,15 @@ const isOverBudget = () => delayMs.value > 3
     <div class="demo-container">
       <div class="info-section">
         <div class="delay-display" :class="{ warning: isOverBudget() }">
-          {{ delayMs.toFixed(1) }}ms
+          {{ actualTimeMs.toFixed(1) }}ms
         </div>
+        <div class="subtitle">Actual Processing Time</div>
         <div class="threshold-indicator">
           <span class="threshold-label">3ms threshold</span>
           <div class="threshold-bar">
             <div class="threshold-marker" :style="{ left: '30%' }"></div>
-            <div class="current-position" :style="{ width: `${Math.min(delayMs * 10, 100)}%` }" :class="{ over: isOverBudget() }"></div>
+            <div class="current-position" :style="{ width: `${Math.min(actualTimeMs * 10, 100)}%` }"
+              :class="{ over: isOverBudget() }"></div>
           </div>
         </div>
       </div>
@@ -55,15 +65,8 @@ const isOverBudget = () => delayMs.value > 3
       <div class="controls">
         <div class="control-group">
           <label>
-            Processing Delay
-            <input
-              type="range"
-              min="0"
-              max="10"
-              step="0.1"
-              :value="delayMs"
-              @input="onDelayInput"
-            />
+            Artificial Processing Load
+            <input type="range" min="0" max="10" step="0.01" :value="delayMs" @input="onDelayInput" />
           </label>
           <div class="range-labels">
             <span>0ms (safe)</span>
@@ -103,6 +106,13 @@ const isOverBudget = () => delayMs.value > 3
 
 .delay-display.warning {
   color: #ff6b6b;
+}
+
+.subtitle {
+  font-size: 1rem;
+  color: #999;
+  text-align: center;
+  margin-top: -0.5rem;
 }
 
 .threshold-indicator {

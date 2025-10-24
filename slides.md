@@ -427,20 +427,38 @@ Source: <a href="https://developer.chrome.com/blog/audio-worklet-design-pattern"
 </div>
 
 ---
-layout: center
+layout: MyDefault
 ---
 
 # Live Demo: Exceeding the 3ms Budget
 
-<div class="text-sm text-gray-500">
+<div class="text-sm text-gray-500 mb-3">
 Use the slider to add artificial processing delay. Watch (and hear!) what happens when you go beyond 3ms.
 </div>
+
+```js
+
+  artificialDelay(durationMs: number) {
+    if (durationMs <= 0) return
+
+    const startTime = Date.now()
+    const endTime = startTime + durationMs
+
+    // Busy-wait until the desired duration has passed
+    while (Date.now() < endTime) {
+      // Intentionally empty - burning CPU cycles
+    }
+  }
+```
+
 
 ---
 layout: MyDefault
 ---
 
+
 <DelayGlitchDemo />
+
 
 ---
 layout: image-right
