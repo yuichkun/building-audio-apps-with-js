@@ -6,7 +6,7 @@ import AudioDemo from './AudioDemo.vue'
 let audioBuffer: AudioBuffer | null = null
 let filter: BiquadFilterNode | null = null
 let sourceNode: AudioBufferSourceNode | null = null
-const frequency = ref(1000)
+const frequency = ref(10000)
 const isBufferPlaying = ref(false)
 
 const { isPlaying, toggle, masterGain } = useAudioDemo({
@@ -63,7 +63,7 @@ const updateFrequency = (e: Event) => {
 }
 
 onMounted(async () => {
-  const response = await fetch('/sample.wav')
+  const response = await fetch('/sample-music.wav')
   const arrayBuffer = await response.arrayBuffer()
   const tempCtx = new AudioContext()
   audioBuffer = await tempCtx.decodeAudioData(arrayBuffer)
@@ -74,25 +74,22 @@ onMounted(async () => {
 <template>
   <AudioDemo :is-playing="isPlaying" :master-gain="masterGain" @toggle="toggle">
     <div class="flex flex-col items-center gap-4">
+      Music: <a href="https://open.spotify.com/album/4i1UpRUHk6a6DkiCyjYwbn?si=uRfqlJlnRkiC96SzkgG1Ng" target="_blank"
+        rel="noopener noreferrer">
+        It's just a... / YOGO
+      </a>
       <button
         class="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         :disabled="isBufferPlaying || !audioBuffer" @click="playSound">
-        {{ isBufferPlaying ? 'Playing...' : 'Play Sound' }}
+        {{ isBufferPlaying ? 'Playing...' : 'play' }}
       </button>
 
       <div class="flex flex-col items-center gap-2 w-64">
         <label class="text-sm font-medium">
           Low-Pass Filter: {{ frequency }}Hz
         </label>
-        <input
-          type="range"
-          min="100"
-          max="5000"
-          step="10"
-          :value="frequency"
-          @input="updateFrequency"
-          class="w-full"
-        />
+        <input type="range" min="100" max="10000" step="10" :value="frequency" @input="updateFrequency"
+          class="w-full" />
       </div>
     </div>
   </AudioDemo>
