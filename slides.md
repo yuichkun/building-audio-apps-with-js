@@ -82,7 +82,11 @@ layout: two-cols
 ---
 
 <div class="h-full grid place-items-center">
-  <span><code>audio</code> tag</span>
+
+```html
+<audio src="sound.mp3" controls></audio>
+```
+
 </div>
 
 ::right::
