@@ -211,6 +211,112 @@ source.start() // play the source sound
 </div>
 
 ---
+layout: center
+---
+
+# 👁️ When built-in nodes don't satisfy your needs...
+
+<v-click>
+<div class="pt-8">
+...<code>AudioWorklet</code> to the rescue! 🧑‍🚒
+</div>
+</v-click>
+
+---
+layout: two-cols
+---
+
+# AudioWorklet
+
+<div class="">
+  <ul class="flex flex-col gap-2 text-lg">
+  <v-clicks>
+    <li>Enables custom audio processing on the audio rendering thread</li>
+    <li>Runs on audio thread (not main thread) = no glitches</li>
+    <li>Two-part architecture: Processor + Node</li>
+    <li>Must load processor module via <code>addModule()</code></li>
+    <li>Use MessagePort for bidirectional communication</li>
+  </v-clicks>
+  </ul>
+</div>
+
+::right::
+
+<div class="flex flex-col justify-center h-full">
+  <img src="https://developer.chrome.com/static/blog/audio-worklet/image/audio-worklet-node-proce-5cdb8f8650c7a.svg" alt="AudioWorklet Architecture" class="w-full" />
+  <p class="text-xs text-gray-500 mt-2">
+    Source: <a href="https://developer.chrome.com/blog/audio-worklet" target="_blank">Enter AudioWorklet - Chrome Developers</a>
+  </p>
+</div>
+
+---
+layout: center
+---
+
+Code Example: Building a GainProcessor
+
+<div class="text-sm text-gray-500 mt-4">
+Based on example from <a href="https://developer.chrome.com/blog/audio-worklet" target="_blank">Enter AudioWorklet - Chrome Developers</a>
+</div>
+
+---
+layout: two-cols
+---
+
+<div class="px-2">
+
+**Main Thread** (your app)
+
+```js
+// Load the processor module
+await ctx.audioWorklet.addModule('gain-processor.js')
+
+// Create the worklet node
+const gainNode = new AudioWorkletNode(
+  ctx,
+  'gain-processor'
+)
+
+// Connect it to the audio graph
+oscillator
+  .connect(gainNode)
+  .connect(ctx.destination)
+```
+
+</div>
+
+::right::
+
+<div class="px-2">
+
+**Audio Thread** (processor)
+
+```js
+// gain-processor.js
+class GainProcessor extends AudioWorkletProcessor {
+  static get parameterDescriptors() {
+    return [{ name: 'gain', defaultValue: 1 }]
+  }
+
+  process(inputs, outputs, parameters) {
+    const input = inputs[0][0]
+    const output = outputs[0][0]
+    const gain = parameters.gain[0]
+
+    for (let i = 0; i < input.length; i++) {
+      output[i] = input[i] * gain
+    }
+
+    return true // Keep processor alive
+  }
+}
+
+registerProcessor('gain-processor', GainProcessor)
+```
+
+</div>
+
+---
 layout: MyDefault
 ---
 
