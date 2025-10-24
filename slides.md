@@ -459,6 +459,77 @@ layout: MyDefault
 
 <DelayGlitchDemo />
 
+---
+layout: center
+---
+
+# Need more speed?
+
+<v-click>
+<div class="pt-8">
+...WebAssembly has you covered 🚀
+</div>
+</v-click>
+
+---
+layout: MyDefault
+---
+
+# Leveraging WebAssembly for AudioWorklet
+
+**Why WASM? 🤔**
+
+<v-clicks>
+
+- ⚡ Near-native performance for complex audio processing
+- ♻️ Reuse existing audio codebases in the browser
+
+</v-clicks>
+
+<v-click>
+
+**Popular options:**
+
+</v-click>
+
+<v-clicks>
+
+- 🎹 [JUCE + Emscripten](https://github.com/Dreamtonics/juce_emscripten) - Professional audio framework (used by Synthesizer V)
+- 🎛️ [RNBO](https://rnbo.cycling74.com/) - Export Max/MSP patches to Web Audio
+
+</v-clicks>
+
+---
+layout: image-right
+image: /juce.png
+---
+
+# What is JUCE? 🎵
+
+<v-clicks>
+
+- 🛠️ C++ framework for building audio applications and plugins
+- 🎛️ Used by Adobe, Steinberg, Universal Audio, Waves, and more
+- 📱 Cross-platform: Windows, macOS, Linux, iOS, Android
+- 🔌 Supports all major plugin formats (VST, AU, AAX)
+
+</v-clicks>
+
+---
+layout: MyDefault
+---
+
+# JUCE + Emscripten in Action
+
+
+<div class="mt-8">
+
+The [juce_emscripten](https://github.com/Dreamtonics/juce_emscripten) project enables JUCE applications to run in browsers via WebAssembly.
+
+<a href="https://synthesizerv.com/lab/wasm-juce-demorunner/DemoRunner.html" target="_blank" class="text-xl">
+🎮 Try the live demo
+</a>
+</div>
 
 ---
 layout: image-right
