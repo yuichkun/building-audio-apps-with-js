@@ -20,6 +20,7 @@ const canvas = ref<HTMLCanvasElement | null>(null)
 let analyser: AnalyserNode | null = null
 let animationFrameId: number | null = null
 let dataArray: Float32Array<ArrayBuffer> | null = null
+const SILENCE_THRESHOLD = 0.0005
 
 function setupAnalyser() {
   cleanup()
@@ -63,6 +64,16 @@ function draw() {
   // Clear canvas
   canvasCtx.fillStyle = 'rgb(18, 18, 18)'
   canvasCtx.fillRect(0, 0, displayWidth, displayHeight)
+
+  let hasSignal = false
+  for (let i = 0; i < dataArray.length; i++) {
+    if (Math.abs(dataArray[i]) > SILENCE_THRESHOLD) {
+      hasSignal = true
+      break
+    }
+  }
+
+  if (!hasSignal) return
 
   // Draw waveform
   canvasCtx.lineWidth = 2
