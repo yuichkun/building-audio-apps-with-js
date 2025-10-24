@@ -39,31 +39,25 @@ const displayDb = computed(() => {
 </script>
 
 <template>
-  <div v-if="gainNode" class="volume-control">
-    <label class="volume-label">
-      🔊 Volume
-    </label>
+  <div class="volume-control">
     <div class="volume-slider-container">
-      <input
-        v-model.number="currentDb"
-        type="range"
-        :min="MIN_DB"
-        :max="MAX_DB"
-        step="1"
-        class="volume-slider"
-      />
       <span class="volume-value">{{ displayDb }}</span>
+      <input v-model.number="currentDb" type="range" :min="MIN_DB" :max="MAX_DB" step="1" class="volume-slider"
+        orient="vertical" />
     </div>
+    <label class="volume-label">
+      Volume
+    </label>
   </div>
 </template>
 
 <style scoped>
 .volume-control {
-  display: flex;
+  display: inline-flex;
+  flex-direction: column;
   align-items: center;
-  gap: 1rem;
+  gap: 0.75rem;
   padding: 0.75rem 1rem;
-  background: rgba(0, 0, 0, 0.2);
   border-radius: 0.5rem;
   margin: 0.5rem 0;
 }
@@ -71,30 +65,49 @@ const displayDb = computed(() => {
 .volume-label {
   font-size: 0.875rem;
   font-weight: 600;
+  text-align: center;
   white-space: nowrap;
   opacity: 0.8;
 }
 
 .volume-slider-container {
-  display: flex;
+  display: inline-flex;
+  flex-direction: column;
   align-items: center;
   gap: 0.75rem;
-  flex: 1;
 }
 
 .volume-slider {
-  flex: 1;
-  height: 4px;
-  border-radius: 2px;
-  background: rgba(255, 255, 255, 0.2);
+  writing-mode: bt-lr;
+  -webkit-appearance: slider-vertical;
+  appearance: slider-vertical;
+  height: 8rem;
+  width: 0.75rem;
+  padding: 0;
+  border-radius: 999px;
+  background: transparent;
   outline: none;
   cursor: pointer;
 }
 
+.volume-slider::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 100%;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.volume-slider::-moz-range-track {
+  width: 100%;
+  height: 100%;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.2);
+}
+
 .volume-slider::-webkit-slider-thumb {
   appearance: none;
-  width: 16px;
-  height: 16px;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
   background: #3b82f6;
   cursor: pointer;
@@ -106,8 +119,8 @@ const displayDb = computed(() => {
 }
 
 .volume-slider::-moz-range-thumb {
-  width: 16px;
-  height: 16px;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
   background: #3b82f6;
   cursor: pointer;
@@ -120,10 +133,10 @@ const displayDb = computed(() => {
 }
 
 .volume-value {
+  width: 80px;
   font-size: 0.875rem;
   font-family: monospace;
-  min-width: 4rem;
-  text-align: right;
+  text-align: center;
   opacity: 0.9;
 }
 </style>

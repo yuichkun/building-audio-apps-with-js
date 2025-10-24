@@ -8,14 +8,13 @@ export interface AudioDemoProps {
   label?: string
   playLabel?: string
   stopLabel?: string
-  description?: string
 }
 
 const props = withDefaults(defineProps<AudioDemoProps>(), {
   masterGain: null,
   label: 'Audio Demo',
-  playLabel: '🔊 Play',
-  stopLabel: '🔇 Stop',
+  playLabel: 'play',
+  stopLabel: 'stop',
   description: '',
 })
 
@@ -27,30 +26,18 @@ const buttonText = computed(() => {
   return props.isPlaying ? props.stopLabel : props.playLabel
 })
 
-const statusText = computed(() => {
-  if (props.description) {
-    return props.description
-  }
-  return props.isPlaying ? 'Playing...' : 'Click to play'
-})
 </script>
 
 <template>
   <div class="audio-demo">
     <div class="audio-demo-controls">
-      <button
-        @click="emit('toggle')"
-        class="audio-demo-button"
-        :class="isPlaying ? 'audio-demo-button--stop' : 'audio-demo-button--play'"
-      >
+      <button @click="emit('toggle')" class="audio-demo-button"
+        :class="isPlaying ? 'audio-demo-button--stop' : 'audio-demo-button--play'">
         {{ buttonText }}
       </button>
-      <p class="audio-demo-status">
-        {{ statusText }}
-      </p>
+      <VolumeControl :gain-node="masterGain" />
     </div>
 
-    <VolumeControl :gain-node="masterGain" />
 
     <div v-if="$slots.default" class="audio-demo-content">
       <slot />
@@ -71,36 +58,39 @@ const statusText = computed(() => {
 
 .audio-demo-controls {
   display: flex;
-  flex-direction: column;
   align-items: center;
   gap: 0.5rem;
 }
 
 .audio-demo-button {
-  padding: 0.75rem 1.5rem;
+  width: 82px;
+  padding: 0.45rem 1.5rem;
   border-radius: 0.5rem;
   font-weight: 600;
   font-size: 1rem;
   cursor: pointer;
-  border: none;
+  border-width: 1px;
   color: white;
   transition: all 0.2s ease;
 }
 
 .audio-demo-button--play {
-  background-color: #3b82f6;
+  border-color: #cbcbcb;
 }
 
 .audio-demo-button--play:hover {
-  background-color: #2563eb;
+  background-color: #42b883;
+  border-color: transparent;
 }
 
 .audio-demo-button--stop {
   background-color: #ef4444;
+  border-color: transparent;
 }
 
 .audio-demo-button--stop:hover {
   background-color: #dc2626;
+  border-color: #cbcbcb;
 }
 
 .audio-demo-status {
