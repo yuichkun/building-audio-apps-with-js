@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useAudioDemo } from '../composables/useAudioDemo'
 import AudioDemo from './AudioDemo.vue'
+import WaveformVisualizer from './WaveformVisualizer.vue'
 
 let oscillator: OscillatorNode | null = null
 
@@ -26,9 +27,7 @@ const { isPlaying, toggle, masterGain } = useAudioDemo({
 </script>
 
 <template>
-  <AudioDemo
-    :is-playing="Boolean(isPlaying)"
-    :master-gain="masterGain"
-    @toggle="toggle"
-  />
+  <AudioDemo :is-playing="Boolean(isPlaying)" :master-gain="masterGain" @toggle="toggle">
+    <WaveformVisualizer :source="masterGain" :fullscreen="true" />
+  </AudioDemo>
 </template>

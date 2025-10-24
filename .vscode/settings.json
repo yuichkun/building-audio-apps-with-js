@@ -12,5 +12,6 @@
     "striked",
     "Themable",
     "twoslash"
-  ]
+  ],
+  "editor.formatOnSave": true
 }

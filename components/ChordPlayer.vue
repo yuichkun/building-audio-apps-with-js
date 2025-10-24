@@ -1,11 +1,12 @@
 <script setup lang="ts">
 /**
  * EXAMPLE: Playing multiple oscillators (a chord)
- * Demonstrates handling multiple audio nodes
+ * Demonstrates handling multiple audio nodes + waveform visualization
  */
 
 import { useAudioDemo } from '../composables/useAudioDemo'
 import AudioDemo from './AudioDemo.vue'
+import WaveformVisualizer from './WaveformVisualizer.vue'
 
 const oscillators: OscillatorNode[] = []
 
@@ -43,12 +44,9 @@ const { isPlaying, toggle, masterGain } = useAudioDemo({
 </script>
 
 <template>
-  <AudioDemo
-    :is-playing="isPlaying"
-    :master-gain="masterGain"
-    play-label="🔊 Play C Major Chord"
-    stop-label="🔇 Stop Chord"
-    :description="isPlaying ? 'Playing C-E-G (C Major)' : 'Multiple oscillators example'"
-    @toggle="toggle"
-  />
+  <AudioDemo :is-playing="isPlaying" :master-gain="masterGain" play-label="🔊 Play C Major Chord"
+    stop-label="🔇 Stop Chord" :description="isPlaying ? 'Playing C-E-G (C Major)' : 'Multiple oscillators example'"
+    @toggle="toggle">
+    <WaveformVisualizer :source="masterGain" :fullscreen="true" />
+  </AudioDemo>
 </template>
