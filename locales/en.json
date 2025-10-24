@@ -72,6 +72,16 @@
     "step4": "Handle user interactions"
   },
 
+  "reverb": {
+    "title": "Reverb Demo",
+    "subtitle": "Algorithmic reverb with AudioWorklet",
+    "description": "Drop an audio file or use the default sample to hear the reverb effect",
+    "wetDry": "Wet/Dry Mix",
+    "decayTime": "Decay Time",
+    "preDelay": "Pre-delay",
+    "roomSize": "Room Size"
+  },
+
   "conclusion": {
     "title": "Key Takeaways",
     "point1": "Use AudioWorklets for real-time processing",

@@ -72,6 +72,16 @@
     "step4": "ユーザーインタラクションの処理"
   },
 
+  "reverb": {
+    "title": "リバーブデモ",
+    "subtitle": "AudioWorkletによるアルゴリズミックリバーブ",
+    "description": "オーディオファイルをドロップするか、デフォルトのサンプルでリバーブエフェクトを聴いてみましょう",
+    "wetDry": "Wet/Dryミックス",
+    "decayTime": "減衰時間",
+    "preDelay": "プリディレイ",
+    "roomSize": "ルームサイズ"
+  },
+
   "conclusion": {
     "title": "まとめ",
     "point1": "リアルタイム処理にはAudioWorkletsを使用",

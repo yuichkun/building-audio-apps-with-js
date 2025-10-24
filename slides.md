@@ -233,6 +233,22 @@ onMounted(async () => {
 <LanguageSwitcher />
 
 ---
+layout: two-cols
+---
+
+# {{ $t('reverb.title') }}
+
+<div class="text-lg opacity-80 mb-4">{{ $t('reverb.subtitle') }}</div>
+
+{{ $t('reverb.description') }}
+
+::right::
+
+<ReverbDemo />
+
+<LanguageSwitcher />
+
+---
 layout: center
 ---
 
