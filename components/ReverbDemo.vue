@@ -209,20 +209,6 @@ onUnmounted(() => {
             <input type="range" min="0.1" max="10" step="0.1" :value="decayTime" @input="onDecayTimeInput" />
           </label>
         </div>
-
-        <div class="control-group">
-          <label>
-            Pre-delay: {{ preDelay.toFixed(0) }}ms
-            <input type="range" min="0" max="100" step="1" :value="preDelay" @input="onPreDelayInput" />
-          </label>
-        </div>
-
-        <div class="control-group">
-          <label>
-            Room Size: {{ roomSize.toFixed(1) }}x
-            <input type="range" min="0.5" max="3" step="0.1" :value="roomSize" @input="onRoomSizeInput" />
-          </label>
-        </div>
       </div>
     </div>
   </AudioDemo>

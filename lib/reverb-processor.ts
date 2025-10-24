@@ -16,9 +16,10 @@ class CombFilter {
   feedback: number
 
   constructor(delaySamples: number, feedback: number) {
-    this.buffer = new Float32Array(Math.ceil(delaySamples))
+    const initialLength = Math.max(2, Math.ceil(delaySamples))
+    this.buffer = new Float32Array(initialLength)
     this.writeIndex = 0
-    this.delayInSamples = Math.floor(delaySamples)
+    this.delayInSamples = Math.min(Math.floor(delaySamples), this.buffer.length - 1)
     this.feedback = feedback
   }
 
@@ -33,7 +34,14 @@ class CombFilter {
   }
 
   updateDelay(newDelaySamples: number) {
-    this.delayInSamples = Math.floor(newDelaySamples)
+    const targetDelay = Math.max(1, Math.floor(newDelaySamples))
+    if (targetDelay >= this.buffer.length) {
+      const newBuffer = new Float32Array(targetDelay + 1)
+      newBuffer.set(this.buffer)
+      this.buffer = newBuffer
+    }
+    this.delayInSamples = Math.min(targetDelay, this.buffer.length - 1)
+    this.writeIndex = this.writeIndex % this.buffer.length
   }
 
   updateFeedback(newFeedback: number) {
@@ -48,9 +56,10 @@ class AllpassFilter {
   gain: number
 
   constructor(delaySamples: number, gain: number = 0.5) {
-    this.buffer = new Float32Array(Math.ceil(delaySamples))
+    const initialLength = Math.max(2, Math.ceil(delaySamples))
+    this.buffer = new Float32Array(initialLength)
     this.writeIndex = 0
-    this.delayInSamples = Math.floor(delaySamples)
+    this.delayInSamples = Math.min(Math.floor(delaySamples), this.buffer.length - 1)
     this.gain = gain
   }
 
@@ -66,7 +75,14 @@ class AllpassFilter {
   }
 
   updateDelay(newDelaySamples: number) {
-    this.delayInSamples = Math.floor(newDelaySamples)
+    const targetDelay = Math.max(1, Math.floor(newDelaySamples))
+    if (targetDelay >= this.buffer.length) {
+      const newBuffer = new Float32Array(targetDelay + 1)
+      newBuffer.set(this.buffer)
+      this.buffer = newBuffer
+    }
+    this.delayInSamples = Math.min(targetDelay, this.buffer.length - 1)
+    this.writeIndex = this.writeIndex % this.buffer.length
   }
 }
 
@@ -98,10 +114,9 @@ class ReverbProcessor extends AudioWorkletProcessor {
     this.preDelaySamples = 0
 
     // Initialize filters with base delays
-    const feedback = this.calculateFeedback(this.decayTime)
-    this.combFilters = this.baseCombDelays.map(
-      delayMs => new CombFilter((delayMs / 1000) * sampleRate, feedback)
-    )
+    const baseCombDelaySamples = this.baseCombDelays.map(delayMs => (delayMs / 1000) * sampleRate)
+    const feedback = this.calculateFeedback(this.decayTime, baseCombDelaySamples)
+    this.combFilters = baseCombDelaySamples.map(delaySamples => new CombFilter(delaySamples, feedback))
     this.allpassFilters = this.baseAllpassDelays.map(
       delayMs => new AllpassFilter((delayMs / 1000) * sampleRate, 0.5)
     )
@@ -131,12 +146,14 @@ class ReverbProcessor extends AudioWorkletProcessor {
     }
   }
 
-  calculateFeedback(decayTime: number): number {
+  calculateFeedback(decayTime: number, delaySamples?: number[]): number {
     // Feedback coefficient to achieve desired RT60 (decay time)
     // RT60 = -60dB decay time
     // feedback = 10^(-3 * delayTime / RT60)
-    const avgDelayMs = this.baseCombDelays.reduce((a, b) => a + b) / this.baseCombDelays.length
-    const avgDelaySec = avgDelayMs / 1000
+    const samples = delaySamples ?? this.combFilters.map(filter => filter.delayInSamples)
+    if (samples.length === 0) return 0
+    const avgDelaySamples = samples.reduce((a, b) => a + b, 0) / samples.length
+    const avgDelaySec = avgDelaySamples / sampleRate
     return Math.pow(10, (-3 * avgDelaySec) / decayTime)
   }
 
@@ -154,6 +171,7 @@ class ReverbProcessor extends AudioWorkletProcessor {
       const newDelay = (this.baseAllpassDelays[i] * this.roomSize / 1000) * sampleRate
       filter.updateDelay(newDelay)
     })
+    this.updateDecay()
   }
 
   processPreDelay(input: number): number {
