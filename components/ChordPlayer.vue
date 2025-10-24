@@ -12,13 +12,9 @@ const oscillators: OscillatorNode[] = []
 // A major chord: C4 (261.63 Hz), E4 (329.63 Hz), G4 (392.00 Hz)
 const frequencies = [261.63, 329.63, 392.00]
 
-const { isPlaying, toggle } = useAudioDemo({
-  onSetup: (ctx) => {
+const { isPlaying, toggle, masterGain } = useAudioDemo({
+  onSetup: (ctx, destination) => {
     const nodes: AudioNode[] = []
-    const masterGain = ctx.createGain()
-    masterGain.gain.setValueAtTime(0.2, ctx.currentTime)
-    masterGain.connect(ctx.destination)
-    nodes.push(masterGain)
 
     frequencies.forEach(freq => {
       const osc = ctx.createOscillator()
@@ -29,7 +25,7 @@ const { isPlaying, toggle } = useAudioDemo({
       gain.gain.setValueAtTime(0.33, ctx.currentTime)
 
       osc.connect(gain)
-      gain.connect(masterGain)
+      gain.connect(destination)
 
       osc.start()
 
@@ -48,7 +44,8 @@ const { isPlaying, toggle } = useAudioDemo({
 
 <template>
   <AudioDemo
-    :is-playing="isPlaying as boolean"
+    :is-playing="isPlaying"
+    :master-gain="masterGain"
     play-label="🔊 Play C Major Chord"
     stop-label="🔇 Stop Chord"
     :description="isPlaying ? 'Playing C-E-G (C Major)' : 'Multiple oscillators example'"

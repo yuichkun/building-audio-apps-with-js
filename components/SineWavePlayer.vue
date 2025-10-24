@@ -4,21 +4,17 @@ import AudioDemo from './AudioDemo.vue'
 
 let oscillator: OscillatorNode | null = null
 
-const { isPlaying, toggle } = useAudioDemo({
-  onSetup: (ctx) => {
+const { isPlaying, toggle, masterGain } = useAudioDemo({
+  onSetup: (ctx, destination) => {
     oscillator = ctx.createOscillator()
-    const gainNode = ctx.createGain()
 
     oscillator.type = 'sine'
     oscillator.frequency.setValueAtTime(440, ctx.currentTime)
-    gainNode.gain.setValueAtTime(0.3, ctx.currentTime)
 
-    oscillator.connect(gainNode)
-    gainNode.connect(ctx.destination)
-
+    oscillator.connect(destination)
     oscillator.start()
 
-    return [oscillator, gainNode]
+    return oscillator
   },
   onCleanup: () => {
     if (oscillator) {
@@ -32,6 +28,7 @@ const { isPlaying, toggle } = useAudioDemo({
 <template>
   <AudioDemo
     :is-playing="Boolean(isPlaying)"
+    :master-gain="masterGain"
     @toggle="toggle"
   />
 </template>

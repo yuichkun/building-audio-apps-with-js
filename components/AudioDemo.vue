@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import VolumeControl from './VolumeControl.vue'
 
 export interface AudioDemoProps {
-  isPlaying: boolean
+  isPlaying: boolean | undefined
+  masterGain?: GainNode | null
   label?: string
   playLabel?: string
   stopLabel?: string
@@ -10,6 +12,7 @@ export interface AudioDemoProps {
 }
 
 const props = withDefaults(defineProps<AudioDemoProps>(), {
+  masterGain: null,
   label: 'Audio Demo',
   playLabel: '🔊 Play',
   stopLabel: '🔇 Stop',
@@ -46,6 +49,8 @@ const statusText = computed(() => {
         {{ statusText }}
       </p>
     </div>
+
+    <VolumeControl :gain-node="masterGain" />
 
     <div v-if="$slots.default" class="audio-demo-content">
       <slot />
