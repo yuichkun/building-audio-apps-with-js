@@ -240,3 +240,24 @@ class: text-center
 </div>
 
 <LanguageSwitcher />
+
+---
+layout: image-right
+image: /public/portrait.jpg
+---
+
+# Who am I?
+<v-clicks>
+
+- 🎓 Studied composition at Tokyo University of the Arts
+- 🏢 Founder and creative lead at [Escentier, LLC](https://www.escentier.com).
+- We deliver:
+  - 🎥 Video production
+  - ✨ 3D graphics
+  - 🎵 Tailored music and sound design
+  - 💻 Web apps, games, and other digital experiences
+
+</v-clicks>
+
+
+<LanguageSwitcher />
