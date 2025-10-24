@@ -11,6 +11,7 @@ class DelayGlitchProcessor extends AudioWorkletProcessor {
   delayMs: number
   frameCounter: number
   reportInterval: number
+  _dummyCounter: number // Prevent optimizer from removing busy-wait loop
 
   constructor() {
     super()
@@ -26,6 +27,7 @@ class DelayGlitchProcessor extends AudioWorkletProcessor {
     // Throttling for sending timing updates
     this.frameCounter = 0
     this.reportInterval = 10 // Send timing update every 10 frames
+    this._dummyCounter = 0 // Used in busy-wait loop to prevent optimization
 
     // Handle parameter updates from main thread
     this.port.onmessage = (e) => {
@@ -46,8 +48,9 @@ class DelayGlitchProcessor extends AudioWorkletProcessor {
     const endTime = startTime + durationMs
 
     // Busy-wait until the desired duration has passed
+    // Modify class property to prevent optimizer from removing the loop
     while (Date.now() < endTime) {
-      // Intentionally empty - burning CPU cycles
+      this._dummyCounter++ // Persist side effect - can't be optimized away
     }
   }
 
