@@ -1,57 +1,43 @@
 <script setup lang="ts">
-import { computed } from 'vue'
 import VolumeControl from './VolumeControl.vue'
 
 export interface AudioDemoProps {
   isPlaying: boolean | undefined
   masterGain?: GainNode | null
-  label?: string
-  playLabel?: string
-  stopLabel?: string
 }
 
-const props = withDefaults(defineProps<AudioDemoProps>(), {
+withDefaults(defineProps<AudioDemoProps>(), {
   masterGain: null,
-  label: 'Audio Demo',
-  playLabel: 'play',
-  stopLabel: 'stop',
-  description: '',
 })
 
 const emit = defineEmits<{
   toggle: []
 }>()
 
-const buttonText = computed(() => {
-  return props.isPlaying ? props.stopLabel : props.playLabel
-})
 
 </script>
 
 <template>
   <div class="audio-demo">
-    <div class="audio-demo-controls">
-      <button @click="emit('toggle')" class="audio-demo-button"
-        :class="isPlaying ? 'audio-demo-button--stop' : 'audio-demo-button--play'">
-        {{ buttonText }}
+    <div class="start-button-wrapper" v-if="!isPlaying">
+      <button @click="emit('toggle')" class="audio-demo-button">
+        play
       </button>
-      <VolumeControl :gain-node="masterGain" />
     </div>
-
-
-    <div v-if="$slots.default" class="audio-demo-content">
-      <slot />
-    </div>
+    <template v-else>
+      <div class="volume-controls-wrapper">
+        <VolumeControl :gain-node="masterGain" />
+      </div>
+      <div v-if="$slots.default" class="audio-demo-content">
+        <slot />
+      </div>
+    </template>
   </div>
 </template>
 
 <style scoped>
 .audio-demo {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1.5rem;
-  padding: 2rem;
+  position: relative;
   height: 100%;
   overflow: scroll;
 }
@@ -60,6 +46,20 @@ const buttonText = computed(() => {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+}
+
+.start-button-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  height: 100%;
+}
+
+.volume-controls-wrapper {
+  position: absolute;
+  bottom: 0;
+  left: 0;
 }
 
 .audio-demo-button {
@@ -83,24 +83,8 @@ const buttonText = computed(() => {
   border-color: transparent;
 }
 
-.audio-demo-button--stop {
-  background-color: #ef4444;
-  border-color: transparent;
-}
-
-.audio-demo-button--stop:hover {
-  background-color: #dc2626;
-  border-color: #cbcbcb;
-}
-
-.audio-demo-status {
-  margin: 0;
-  font-size: 0.875rem;
-  opacity: 0.6;
-}
-
 .audio-demo-content {
   width: 100%;
-  max-width: 600px;
+  padding-bottom: 48px;
 }
 </style>
