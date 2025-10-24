@@ -407,6 +407,42 @@ registerProcessor('reverb-processor', ReverbProcessor)
 </div>
 
 ---
+layout: center
+---
+
+# ⚠️ Critical: The 3ms Rule
+
+<div class="text-left">
+  <ul class="flex flex-col gap-4 text-xl">
+  <v-clicks>
+    <li>At 44.1kHz, <code>process()</code> is called <strong>~344 times per second</strong> (128 frames each)</li>
+    <li>Each call has only <strong>~3ms</strong> to complete</li>
+    <li>Exceeding this budget causes <strong>audio glitches</strong></li>
+  </v-clicks>
+  </ul>
+</div>
+
+<div class="text-sm text-gray-500 mt-8">
+Source: <a href="https://developer.chrome.com/blog/audio-worklet-design-pattern" target="_blank">AudioWorklet Design Pattern - Chrome Developers</a>
+</div>
+
+---
+layout: center
+---
+
+# Live Demo: Exceeding the 3ms Budget
+
+<div class="text-sm text-gray-500">
+Use the slider to add artificial processing delay. Watch (and hear!) what happens when you go beyond 3ms.
+</div>
+
+---
+layout: MyDefault
+---
+
+<DelayGlitchDemo />
+
+---
 layout: image-right
 image: /portrait.jpg
 ---
