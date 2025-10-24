@@ -65,6 +65,8 @@ const statusText = computed(() => {
   align-items: center;
   gap: 1.5rem;
   padding: 2rem;
+  height: 100%;
+  overflow: scroll;
 }
 
 .audio-demo-controls {
