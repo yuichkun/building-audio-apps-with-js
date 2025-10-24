@@ -30,6 +30,9 @@ importers:
       '@iconify-json/lucide':
         specifier: 1.2.70
         version: 1.2.70
+      '@types/audioworklet':
+        specifier: 0.0.88
+        version: 0.0.88
 
 packages:
 
@@ -640,6 +643,9 @@ packages:
   '@szmarczak/http-timer@5.0.1':
     resolution: {integrity: sha512-+PmQX0PiAYPMeVYe237LJAYvOMYW1j2rH5YROyS3b4CTVJum34HfRvKvAzozHAQG0TnHNdUfY9nCeUyRAs//cw==}
     engines: {node: '>=14.16'}
+
+  '@types/audioworklet@0.0.88':
+    resolution: {integrity: sha512-3pLwT6hozLME0mklgnJ+V4Il30UIotOV2PdqZflULmj0Z/1YGvV9TwcUVEJBqI4s1rKjLsasSNNyws00BB1Jog==}
 
   '@types/d3-array@3.2.1':
     resolution: {integrity: sha512-Y2Jn2idRrLzUfAKV2LyRImR+y4oa2AntrgID95SHJxuMUrkNXmanDSed71sRNZysveJVt1hLLemQZIady0FpEg==}
@@ -3510,6 +3516,8 @@ snapshots:
   '@szmarczak/http-timer@5.0.1':
     dependencies:
       defer-to-connect: 2.0.1
+
+  '@types/audioworklet@0.0.88': {}
 
   '@types/d3-array@3.2.1': {}
 
