@@ -8,7 +8,7 @@ import processorUrl from '../lib/reverb-processor.ts?worker&url'
 
 const fileName = ref<string>('')
 const isDragging = ref(false)
-const wetDry = ref(0.5)
+const wetDry = ref(0)
 const decayTime = ref(2.0)
 const preDelay = ref(20)
 const roomSize = ref(1.0)

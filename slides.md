@@ -317,14 +317,94 @@ registerProcessor('gain-processor', GainProcessor)
 </div>
 
 ---
-layout: MyDefault
+layout: center
 ---
 
-# Simple Reverb Demo
+# Fun Example: Simple Reverb
+
+
+---
+layout: MyDefault
+---
 
 <ReverbDemo />
 
 <LanguageSwitcher />
+---
+layout: two-cols
+---
+
+<div class="px-2" style="--slidev-code-font-size: 8px; --slidev-code-line-height: 8px;">
+
+**Main Thread**
+
+```js
+// Load the reverb processor
+await ctx.audioWorklet.addModule(
+  'reverb-processor.js'
+)
+
+// Create the worklet node
+const reverbNode = new AudioWorkletNode(
+  ctx, 'reverb-processor'
+)
+reverbNode.connect(ctx.destination)
+
+// Send parameters via MessagePort
+reverbNode.port.postMessage({
+  wetDry: 0.5,
+  decayTime: 2.0,
+})
+
+// Route audio through reverb
+const source = ctx.createBufferSource()
+source.buffer = audioBuffer
+source.connect(reverbNode)
+source.start()
+```
+
+</div>
+
+::right::
+
+<div class="px-2" style="--slidev-code-font-size: 8px; --slidev-code-line-height: 8px;">
+
+**Audio Thread**
+
+```js
+// reverb-processor.js
+class ReverbProcessor extends AudioWorkletProcessor {
+  constructor() {
+    super()
+    // Initialize comb & allpass filters
+    this.combFilters = [...]
+    this.allpassFilters = [...]
+
+    // Listen for parameter updates
+    this.port.onmessage = (e) => {
+      this.wetDry = e.data.wetDry
+      this.decayTime = e.data.decayTime
+      // Update filters...
+    }
+  }
+
+  process(inputs, outputs, params) {
+    const dry = inputs[0][0]
+
+    // Apply reverb filters
+    let wet = this.processFilters(dry)
+
+    // Mix wet/dry
+    outputs[0][0] = dry * (1 - this.wetDry)
+                  + wet * this.wetDry
+    return true
+  }
+}
+
+registerProcessor('reverb-processor', ReverbProcessor)
+```
+
+</div>
 
 ---
 layout: image-right
