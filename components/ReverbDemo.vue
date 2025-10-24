@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { useAudioDemo } from '../composables/useAudioDemo'
 import AudioDemo from './AudioDemo.vue'
 import WaveformVisualizer from './WaveformVisualizer.vue'
@@ -140,6 +140,12 @@ const onRoomSizeInput = (e: Event) => {
   }
 }
 
+const handleKeyDown = (e: KeyboardEvent) => {
+  if (e.key === 't' || e.key === 'T') {
+    triggerSound()
+  }
+}
+
 // Load default audio file on mount
 onMounted(async () => {
   try {
@@ -156,6 +162,12 @@ onMounted(async () => {
   } catch (error) {
     console.warn('Could not load default sample file:', error)
   }
+
+  window.addEventListener('keydown', handleKeyDown)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('keydown', handleKeyDown)
 })
 </script>
 
@@ -179,7 +191,7 @@ onMounted(async () => {
           <input type="file" accept="audio/*" @change="handleFileSelect" class="file-input" />
         </div>
         <button @click="triggerSound" class="trigger-button" :disabled="!audioBuffer">
-          Trigger Sound
+          Trigger Sound ( t )
         </button>
       </div>
 
