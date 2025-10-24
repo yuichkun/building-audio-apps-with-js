@@ -1,5 +1,5 @@
 ---
-theme: seriph
+theme: apple-basic
 background: https://cover.sli.dev
 title: Building Production-Ready Audio Apps with JavaScript
 info: |
