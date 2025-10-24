@@ -170,6 +170,13 @@ layout: two-cols
 </div>
 
 ---
+layout: center
+---
+
+# Simple playback using Web Audio API
+
+with low-pass filter
+---
 layout: two-cols
 ---
 
