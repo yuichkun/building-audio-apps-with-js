@@ -134,6 +134,72 @@ layout: statement
 # ...not happy?
 
 ---
+layout: center
+---
+
+# Welcome to the world of Web Audio API 🤝
+
+<v-click>
+Quick survey: Who have ever used Web Audio API before?
+</v-click>
+
+---
+layout: two-cols
+---
+
+# Web Audio API
+
+<div class="">
+  <ul class="flex flex-col gap-2 text-md">
+  <v-clicks>
+    <li>High-level JavaScript API for audio processing</li>
+    <li>Node-based audio routing graph architecture</li>
+    <li>Runs on a separate high-priority audio thread</li>
+    <li>Built-in audio nodes for common tasks (gain, filters, oscillators, etc.)</li>
+  </v-clicks>
+  </ul>
+</div>
+
+::right::
+
+<div class="mt-[58px] flex flex-col justify-center">
+  <img src="https://web.dev/static/articles/webaudio-intro/image/audio-graph-two-sources-0c11baa2305a4_856.png" />
+  <p class="text-xs text-gray-500 mt-2">
+    Source: <a href="https://web.dev/articles/webaudio-intro" target="_blank">Getting started with Web Audio API - web.dev</a>
+  </p>
+</div>
+
+---
+layout: two-cols
+---
+
+<div class="h-full grid place-items-center">
+
+```js
+const ctx = new AudioContext()
+
+const source = ctx.createBufferSource()
+source.buffer = audioBuffer
+
+const filter = ctx.createBiquadFilter()
+filter.type = 'lowpass'
+filter.frequency.value = 1000
+
+source.connect(filter)  // source → filter → destination
+filter.connect(ctx.destination)
+
+source.start() // play the source sound
+```
+
+</div>
+
+::right::
+
+<div class="h-full grid place-items-center">
+  <SimpleWebAudioButton />
+</div>
+
+---
 layout: MyDefault
 ---
 

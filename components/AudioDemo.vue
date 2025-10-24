@@ -21,7 +21,7 @@ const emit = defineEmits<{
   <div class="audio-demo">
     <div class="start-button-wrapper" v-if="!isPlaying">
       <button @click="emit('toggle')" class="audio-demo-button">
-        play
+        start
       </button>
     </div>
     <template v-else>
@@ -38,6 +38,7 @@ const emit = defineEmits<{
 <style scoped>
 .audio-demo {
   position: relative;
+  width: 100%;
   height: 100%;
   overflow: scroll;
 }
