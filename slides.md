@@ -8,6 +8,8 @@ info: |
 class: text-center
 drawings:
   persist: false
+defaults:
+  layout: MyDefault
 transition: slide-left
 mdc: true
 ---
