@@ -21,7 +21,9 @@ layout: section
 class: text-center
 ---
 
-# Making Sound on Web
+# {{ $t('slide2.heading') }}
+
+<LanguageSwitcher />
 
 ---
 layout: MyDefault
