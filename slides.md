@@ -14,7 +14,33 @@ background: https://cover.sli.dev
 
 # {{ $t('title') }}
 
+<div class="mt-4">
+Yuichi Yogo
+</div>
+
 <LanguageSwitcher />
+
+---
+layout: center
+class: text-center
+---
+
+<div class="flex flex-col items-center gap-8">
+  <div class="flex flex-col items-center gap-3">
+    <div class="text-2xl font-semibold">This Slide</div>
+    <img src="/qr.png" class="rounded-lg shadow-lg w-[120px]" />
+    <a href="https://building-audio-apps-with-js.vercel.app" class="text-blue-400 hover:text-blue-300 transition">
+      building-audio-apps-with-js.vercel.app
+    </a>
+  </div>
+
+  <div class="flex flex-col items-center gap-2 mt-4">
+    <div class="text-lg opacity-70">GitHub</div>
+    <a href="https://github.com/yuichkun/vue-fes-2025" class="text-blue-400 hover:text-blue-300 transition">
+      github.com/yuichkun/vue-fes-2025
+    </a>
+  </div>
+</div>
 
 ---
 layout: section
