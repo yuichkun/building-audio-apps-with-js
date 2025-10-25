@@ -102,5 +102,13 @@
     "heading": "JUCE + Emscripten の実例",
     "description": "プロジェクトは、JUCEアプリケーションをWebAssembly経由でブラウザで実行できるようにします。",
     "tryDemo": "ライブデモを試す"
+  },
+  "slide28": {
+    "heading": "Maxとは？ 🎨",
+    "list1": "オーディオとマルチメディアのためのビジュアルプログラミング環境（旧Max/MSP）",
+    "list2": "Cycling '74開発",
+    "list3": "コードを書く代わりにケーブルでオブジェクトを接続",
+    "list4": "カスタムシンセサイザー、エフェクト、インタラクティブインスタレーションなどを構築",
+    "list5": "RNBOはMaxパッチをWeb Audio（WASM経由）、VST、その他にエクスポート"
   }
 }

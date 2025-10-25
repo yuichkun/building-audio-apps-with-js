@@ -585,17 +585,20 @@ layout: image-right
 image: /max.png
 ---
 
-# What is Max? 🎨
+# {{ $t('slide28.heading') }}
 
 <v-clicks>
 
-- 🎼 Visual programming environment for audio and multimedia (formerly Max/MSP)
-- 🏢 Developed by Cycling '74
-- 🔌 Connect objects with virtual cables instead of writing code
-- 🎹 Build custom synthesizers, effects, and interactive installations
-- 🌐 **RNBO exports Max patches to Web Audio (via WASM)**, VST, and more
+- 🎼 {{ $t('slide28.list1') }}
+- 🏢 {{ $t('slide28.list2') }}
+- 🔌 {{ $t('slide28.list3') }}
+- 🎹 {{ $t('slide28.list4') }}
+- 🌐 **{{ $t('slide28.list5') }}**
 
 </v-clicks>
+
+<LanguageSwitcher />
+
 ---
 layout: image-right
 image: /kentaro.jpg

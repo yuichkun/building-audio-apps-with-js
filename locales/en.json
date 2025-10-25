@@ -102,5 +102,13 @@
     "heading": "JUCE + Emscripten in Action",
     "description": "project enables JUCE applications to run in browsers via WebAssembly.",
     "tryDemo": "Try the live demo"
+  },
+  "slide28": {
+    "heading": "What is Max? 🎨",
+    "list1": "Visual programming environment for audio and multimedia (formerly Max/MSP)",
+    "list2": "Developed by Cycling '74",
+    "list3": "Connect objects with virtual cables instead of writing code",
+    "list4": "Build custom synthesizers, effects, and interactive installations",
+    "list5": "RNBO exports Max patches to Web Audio (via WASM), VST, and more"
   }
 }
