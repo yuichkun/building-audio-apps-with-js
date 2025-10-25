@@ -60,5 +60,18 @@
   "slide20": {
     "mainThread": "Main Thread",
     "audioThread": "Audio Thread"
+  },
+  "slide21": {
+    "heading": "⚠️ Critical: The 3ms Rule",
+    "list1": "At 44.1kHz,",
+    "list1b": "is called",
+    "list1c": "~344 times per second",
+    "list1d": "(128 frames each)",
+    "list2": "Each call has only",
+    "list2b": "~3ms",
+    "list2c": "to complete",
+    "list3": "Exceeding this budget causes",
+    "list3b": "audio glitches",
+    "source": "Source:"
   }
 }

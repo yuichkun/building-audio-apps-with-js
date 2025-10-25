@@ -446,21 +446,23 @@ registerProcessor('reverb-processor', ReverbProcessor)
 layout: center
 ---
 
-# ⚠️ Critical: The 3ms Rule
+# {{ $t('slide21.heading') }}
 
 <div class="text-left">
   <ul class="flex flex-col gap-4 text-xl">
   <v-clicks>
-    <li>At 44.1kHz, <code>process()</code> is called <strong>~344 times per second</strong> (128 frames each)</li>
-    <li>Each call has only <strong>~3ms</strong> to complete</li>
-    <li>Exceeding this budget causes <strong>audio glitches</strong></li>
+    <li>{{ $t('slide21.list1') }} <code>process()</code> {{ $t('slide21.list1b') }} <strong>{{ $t('slide21.list1c') }}</strong> {{ $t('slide21.list1d') }}</li>
+    <li>{{ $t('slide21.list2') }} <strong>{{ $t('slide21.list2b') }}</strong> {{ $t('slide21.list2c') }}</li>
+    <li>{{ $t('slide21.list3') }} <strong>{{ $t('slide21.list3b') }}</strong></li>
   </v-clicks>
   </ul>
 </div>
 
 <div class="text-sm text-gray-500 mt-8">
-Source: <a href="https://developer.chrome.com/blog/audio-worklet-design-pattern" target="_blank">AudioWorklet Design Pattern - Chrome Developers</a>
+{{ $t('slide21.source') }} <a href="https://developer.chrome.com/blog/audio-worklet-design-pattern" target="_blank">AudioWorklet Design Pattern - Chrome Developers</a>
 </div>
+
+<LanguageSwitcher />
 
 ---
 layout: MyDefault
