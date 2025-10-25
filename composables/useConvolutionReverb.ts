@@ -54,6 +54,9 @@ export function useConvolutionReverb(): UseConvolutionReverbReturn {
   let pendingGPU = false
   let pendingInBlock: Float32Array | null = null
 
+  // Track if audio graph is connected
+  let audioGraphConnected = false
+
   /**
    * Create AudioWorklet processor code inline
    */
@@ -68,7 +71,14 @@ class GPUConvolverProcessor extends AudioWorkletProcessor {
     this.outputQueue = [];
     this.port.onmessage = (e) => {
       const m = e.data;
-      if (m?.type === 'outBlock') this.outputQueue.push(m.data);
+      if (m?.type === 'outBlock') {
+        this.outputQueue.push(m.data);
+      } else if (m?.type === 'reset') {
+        // Clear all state on reset
+        this.inputFill = 0;
+        this.inputBuf.fill(0);
+        this.outputQueue.length = 0;
+      }
     };
   }
 
@@ -294,8 +304,12 @@ registerProcessor('${WORKLET_NAME}', GPUConvolverProcessor);
     }
 
     // Stop previous source if playing
+    const wasPlaying = isPlaying.value
     if (sourceNode) {
       try {
+        // Clear onended handler to prevent race condition
+        // The old source's onended would set isPlaying=false after the new source starts
+        sourceNode.onended = null
         sourceNode.stop()
         sourceNode.disconnect()
       } catch (e) {
@@ -303,8 +317,20 @@ registerProcessor('${WORKLET_NAME}', GPUConvolverProcessor);
       }
     }
 
-    // Reset prevTail for clean start
-    prevTail = new Float32Array(Math.max(0, (gpu.irLength.value || 0) - 1))
+    // Clear worklet state on re-trigger
+    if (workletNode && wasPlaying) {
+      workletNode.port.postMessage({ type: 'reset' })
+    }
+
+    // Reset GPU processing state
+    pendingInBlock = null
+    pendingGPU = false
+
+    // Only reset prevTail when starting from a completely stopped state
+    // Preserve reverb tail during re-triggers for continuity
+    if (!wasPlaying) {
+      prevTail = new Float32Array(Math.max(0, (gpu.irLength.value || 0) - 1))
+    }
     dryDelay.delayTime.value = BLOCK_SIZE / ctx.sampleRate
 
     // Create new source (BufferSourceNode can only be started once)
@@ -313,7 +339,7 @@ registerProcessor('${WORKLET_NAME}', GPUConvolverProcessor);
     sourceNode.loop = false // One-shot playback
 
     // Setup audio graph if not already connected
-    if (!workletNode.numberOfOutputs || workletNode.context.state === 'suspended') {
+    if (!audioGraphConnected) {
       // Wet path: source → worklet → wetGain → masterOut → destination
       workletNode.connect(wetGain)
       wetGain.connect(masterOut)
@@ -327,6 +353,8 @@ registerProcessor('${WORKLET_NAME}', GPUConvolverProcessor);
       drySum.connect(dryDelay)
       dryDelay.connect(dryGain)
       dryGain.connect(masterOut)
+
+      audioGraphConnected = true
     }
 
     // Connect source to both paths
@@ -399,6 +427,7 @@ registerProcessor('${WORKLET_NAME}', GPUConvolverProcessor);
     prevTail = null
     pendingInBlock = null
     pendingGPU = false
+    audioGraphConnected = false
 
     audioReady.value = false
     isPlaying.value = false
