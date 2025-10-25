@@ -518,29 +518,31 @@ layout: center
 layout: MyDefault
 ---
 
-# Leveraging WebAssembly for AudioWorklet
+# {{ $t('slide25.heading') }}
 
-**Why WASM? 🤔**
+**{{ $t('slide25.whyWasm') }}**
 
 <v-clicks>
 
-- ⚡ Near-native performance for complex audio processing
-- ♻️ Reuse existing audio codebases in the browser
+- ⚡ {{ $t('slide25.list1') }}
+- ♻️ {{ $t('slide25.list2') }}
 
 </v-clicks>
 
 <v-click>
 
-**Popular options:**
+**{{ $t('slide25.popularOptions') }}**
 
 </v-click>
 
 <v-clicks>
 
-- 🎹 [JUCE + Emscripten](https://github.com/Dreamtonics/juce_emscripten) - Professional audio framework (used by Synthesizer V)
-- 🎛️ [RNBO](https://rnbo.cycling74.com/) - Export Max/MSP patches to Web Audio
+- 🎹 [JUCE + Emscripten](https://github.com/Dreamtonics/juce_emscripten) - {{ $t('slide25.juceDesc') }}
+- 🎛️ [RNBO](https://rnbo.cycling74.com/) - {{ $t('slide25.rnboDesc') }}
 
 </v-clicks>
+
+<LanguageSwitcher />
 
 ---
 layout: image-right

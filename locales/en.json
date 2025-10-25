@@ -81,5 +81,14 @@
   "slide24": {
     "heading": "Need more speed?",
     "answer": "...WebAssembly has you covered 🚀"
+  },
+  "slide25": {
+    "heading": "Leveraging WebAssembly for AudioWorklet",
+    "whyWasm": "Why WASM? 🤔",
+    "list1": "Near-native performance for complex audio processing",
+    "list2": "Reuse existing audio codebases in the browser",
+    "popularOptions": "Popular options:",
+    "juceDesc": "Professional audio framework (used by Synthesizer V)",
+    "rnboDesc": "Export Max/MSP patches to Web Audio"
   }
 }

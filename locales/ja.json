@@ -81,5 +81,14 @@
   "slide24": {
     "heading": "もっと速度が必要？",
     "answer": "...WebAssemblyが解決します 🚀"
+  },
+  "slide25": {
+    "heading": "AudioWorkletでWebAssemblyを活用する",
+    "whyWasm": "なぜWASM？ 🤔",
+    "list1": "複雑な音声処理でもネイティブに近いパフォーマンス",
+    "list2": "既存のオーディオコードベースをブラウザで再利用できる",
+    "popularOptions": "人気のオプション：",
+    "juceDesc": "プロフェッショナルなオーディオフレームワーク（Synthesizer Vで使用）",
+    "rnboDesc": "Max/MSPパッチをWeb Audioにエクスポート"
   }
 }
