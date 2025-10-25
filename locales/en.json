@@ -2,5 +2,8 @@
   "title": "Building Production-Ready Audio Apps with JavaScript",
   "slide2": {
     "heading": "Making Sound on Web"
+  },
+  "slide3": {
+    "heading": "2 ways to make sound on web"
   }
 }

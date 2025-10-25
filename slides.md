@@ -29,7 +29,7 @@ class: text-center
 layout: MyDefault
 ---
 
-# 2 ways to make sound on web
+# {{ $t('slide3.heading') }}
 
 <div class="h-full grid place-items-center">
   <ol class="list-decimal flex flex-col gap-4 text-4xl">
@@ -39,6 +39,8 @@ layout: MyDefault
   </v-clicks>
   </ol>
 </div>
+
+<LanguageSwitcher />
 
 ---
 layout: statement
