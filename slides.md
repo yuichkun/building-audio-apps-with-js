@@ -197,9 +197,12 @@ layout: two-cols
 layout: center
 ---
 
-# Simple playback using Web Audio API
+# {{ $t('slide12.heading') }}
 
-with low-pass filter
+{{ $t('slide12.subtitle') }}
+
+<LanguageSwitcher />
+
 ---
 layout: two-cols
 ---

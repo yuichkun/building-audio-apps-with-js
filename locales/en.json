@@ -28,5 +28,9 @@
     "list2": "Node-based audio routing graph architecture",
     "list3": "Runs on a separate high-priority audio thread",
     "list4": "Built-in audio nodes for common tasks (gain, filters, oscillators, etc.)"
+  },
+  "slide12": {
+    "heading": "Simple playback using Web Audio API",
+    "subtitle": "with low-pass filter"
   }
 }
