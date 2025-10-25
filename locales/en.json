@@ -8,5 +8,12 @@
   },
   "slide4": {
     "heading": "Which one to choose? 🤔"
+  },
+  "slide5": {
+    "when": "when...",
+    "list1": "you just want to play a sound file",
+    "list2": "you don't need fine-grained control over loading",
+    "list3": "you only need to play it as-is",
+    "or": "or"
   }
 }

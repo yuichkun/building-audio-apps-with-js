@@ -56,13 +56,13 @@ layout: two-cols
 
 <h1>Use <code>HTMLAudioElement</code></h1>
 
-when...
+{{ $t('slide5.when') }}
 <div class="">
   <ul class="flex flex-col gap-4 text-2xl">
   <v-clicks>
-    <li>you just want to play a sound file</li>
-    <li>you don't need fine-grained control over loading</li>
-    <li>you only need to play it as-is</li>
+    <li>{{ $t('slide5.list1') }}</li>
+    <li>{{ $t('slide5.list2') }}</li>
+    <li>{{ $t('slide5.list3') }}</li>
   </v-clicks>
   </ul>
 </div>
@@ -76,12 +76,14 @@ const audio = new Audio('sound.mp3')
 audio.play()
 ```
 
-or
+{{ $t('slide5.or') }}
 
 ```html
 <audio src="sound.mp3" controls></audio>
 ```
 </div>
+
+<LanguageSwitcher />
 
 ---
 layout: two-cols
