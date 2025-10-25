@@ -53,5 +53,8 @@
     "yourApp": "アプリ",
     "audioThread": "オーディオスレッド",
     "processor": "プロセッサ"
+  },
+  "slide18": {
+    "heading": "楽しい例：シンプルなリバーブ"
   }
 }

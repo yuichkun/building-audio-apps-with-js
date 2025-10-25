@@ -353,8 +353,9 @@ registerProcessor('gain-processor', GainProcessor)
 layout: center
 ---
 
-# Fun Example: Simple Reverb
+# {{ $t('slide18.heading') }}
 
+<LanguageSwitcher />
 
 ---
 layout: MyDefault

@@ -53,5 +53,8 @@
     "yourApp": "your app",
     "audioThread": "Audio Thread",
     "processor": "processor"
+  },
+  "slide18": {
+    "heading": "Fun Example: Simple Reverb"
   }
 }
