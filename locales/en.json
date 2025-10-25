@@ -110,5 +110,11 @@
     "list3": "Connect objects with virtual cables instead of writing code",
     "list4": "Build custom synthesizers, effects, and interactive installations",
     "list5": "RNBO exports Max patches to Web Audio (via WASM), VST, and more"
+  },
+  "slide29": {
+    "heading": "Made with RNBO",
+    "collaboration": "Collaboration with",
+    "soundDesigner": "sound designer at teamLAB",
+    "tryDemo": "Try the demo"
   }
 }

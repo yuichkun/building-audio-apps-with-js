@@ -110,5 +110,11 @@
     "list3": "コードを書く代わりにケーブルでオブジェクトを接続",
     "list4": "カスタムシンセサイザー、エフェクト、インタラクティブインスタレーションなどを構築",
     "list5": "RNBOはMaxパッチをWeb Audio（WASM経由）、VST、その他にエクスポート"
+  },
+  "slide29": {
+    "heading": "RNBOで作ったもの",
+    "collaboration": "コラボレーション：",
+    "soundDesigner": "teamLABのサウンドデザイナー",
+    "tryDemo": "デモを試す"
   }
 }

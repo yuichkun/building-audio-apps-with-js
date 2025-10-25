@@ -604,16 +604,18 @@ layout: image-right
 image: /kentaro.jpg
 ---
 
-# Made with RNBO
+# {{ $t('slide29.heading') }}
 
 <div class="text-center mt-8">
   <p class="text-xl text-gray-400 mb-8">
-    Collaboration with <a href="https://kentaro.tools/" target="_blank" class="">kentaro</a>, <br /> sound designer at teamLAB
+    {{ $t('slide29.collaboration') }} <a href="https://kentaro.tools/" target="_blank" class="">kentaro</a>, <br /> {{ $t('slide29.soundDesigner') }}
   </p>
   <a href="https://kentaro-granular-web.vercel.app/" target="_blank" class="text-2xl">
-    🌐 Try the demo
+    🌐 {{ $t('slide29.tryDemo') }}
   </a>
 </div>
+
+<LanguageSwitcher />
 
 ---
 layout: image-right
