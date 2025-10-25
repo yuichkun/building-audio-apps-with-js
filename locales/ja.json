@@ -43,5 +43,9 @@
     "list3": "Processor + Node の2部構成",
     "list4": "addModule()を使ってプロセッサモジュールを読み込む",
     "list5": "MessagePortで双方向通信"
+  },
+  "slide16": {
+    "heading": "コード例：GainProcessorを作る",
+    "basedOn": "出典："
   }
 }

@@ -282,11 +282,13 @@ layout: two-cols
 layout: center
 ---
 
-Code Example: Building a GainProcessor
+{{ $t('slide16.heading') }}
 
 <div class="text-sm text-gray-500 mt-4">
-Based on example from <a href="https://developer.chrome.com/blog/audio-worklet" target="_blank">Enter AudioWorklet - Chrome Developers</a>
+{{ $t('slide16.basedOn') }} <a href="https://developer.chrome.com/blog/audio-worklet" target="_blank">Enter AudioWorklet - Chrome Developers</a>
 </div>
+
+<LanguageSwitcher />
 
 ---
 layout: two-cols

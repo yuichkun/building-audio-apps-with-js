@@ -43,5 +43,9 @@
     "list3": "Two-part architecture: Processor + Node",
     "list4": "Must load processor module via addModule()",
     "list5": "Use MessagePort for bidirectional communication"
+  },
+  "slide16": {
+    "heading": "Code Example: Building a GainProcessor",
+    "basedOn": "Based on example from"
   }
 }
