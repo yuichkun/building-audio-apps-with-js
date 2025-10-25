@@ -296,7 +296,7 @@ layout: two-cols
 
 <div class="px-2">
 
-**Main Thread** (your app)
+**{{ $t('slide17.mainThread') }}** ({{ $t('slide17.yourApp') }})
 
 ```js
 // Load the processor module
@@ -320,7 +320,7 @@ oscillator
 
 <div class="px-2">
 
-**Audio Thread** (processor)
+**{{ $t('slide17.audioThread') }}** ({{ $t('slide17.processor') }})
 
 ```js
 // gain-processor.js
@@ -346,6 +346,8 @@ registerProcessor('gain-processor', GainProcessor)
 ```
 
 </div>
+
+<LanguageSwitcher />
 
 ---
 layout: center

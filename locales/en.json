@@ -47,5 +47,11 @@
   "slide16": {
     "heading": "Code Example: Building a GainProcessor",
     "basedOn": "Based on example from"
+  },
+  "slide17": {
+    "mainThread": "Main Thread",
+    "yourApp": "your app",
+    "audioThread": "Audio Thread",
+    "processor": "processor"
   }
 }

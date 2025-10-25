@@ -47,5 +47,11 @@
   "slide16": {
     "heading": "コード例：GainProcessorを作る",
     "basedOn": "出典："
+  },
+  "slide17": {
+    "mainThread": "メインスレッド",
+    "yourApp": "アプリ",
+    "audioThread": "オーディオスレッド",
+    "processor": "プロセッサ"
   }
 }
