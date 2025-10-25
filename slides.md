@@ -654,22 +654,24 @@ layout: center
 layout: MyDefault
 ---
 
-# Convolution Reverb with WebGPU
+# {{ $t('slide32.heading') }}
 
 <div class="text-sm mb-4">
 
-**Convolution** = multiply input signal with impulse response (IR)
+**{{ $t('slide32.convolution') }}** = {{ $t('slide32.convolutionDesc') }}
 
 <v-clicks>
 
-- **CPU Implementation**: ~3.9 billion operations/sec for 2s reverb - too slow for real-time
-- **GPU Implementation**: Parallel compute shader - fast enough!
+- **{{ $t('slide32.cpuImpl') }}**: {{ $t('slide32.cpuImplDesc') }}
+- **{{ $t('slide32.gpuImpl') }}**: {{ $t('slide32.gpuImplDesc') }}
 
 </v-clicks>
 
 </div>
 
 <ConvolutionReverbDemo />
+
+<LanguageSwitcher />
 
 ---
 layout: statement

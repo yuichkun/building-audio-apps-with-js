@@ -128,5 +128,14 @@
   "slide31": {
     "heading": "Experimental: WebGPU-Accelerated Audio",
     "description": "WebGPU brings GPU compute to the browser - perfect for heavy DSP"
+  },
+  "slide32": {
+    "heading": "Convolution Reverb with WebGPU",
+    "convolution": "Convolution",
+    "convolutionDesc": "multiply input signal with impulse response (IR)",
+    "cpuImpl": "CPU Implementation",
+    "cpuImplDesc": "~3.9 billion operations/sec for 2s reverb - too slow for real-time",
+    "gpuImpl": "GPU Implementation",
+    "gpuImplDesc": "Parallel compute shader - fast enough!"
   }
 }

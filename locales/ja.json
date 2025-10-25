@@ -126,7 +126,16 @@
     "list5": "WASMはJavaScriptよりもはるかに高速で、ネイティブに近いパフォーマンスを実現"
   },
   "slide31": {
-    "heading": "実験的：WebGPU支援DSP",
+    "heading": "実験：WebGPU支援DSP",
     "description": "WebGPUがGPUの力をブラウザにもたらす - 重いDSPに最適"
+  },
+  "slide32": {
+    "heading": "WebGPUによる畳み込みリバーブ",
+    "convolution": "畳み込み",
+    "convolutionDesc": "入力信号とインパルス応答（IR）を畳み込む",
+    "cpuImpl": "CPU実装",
+    "cpuImplDesc": "2秒のリバーブで約39億演算/秒 - リアルタイムには遅すぎる",
+    "gpuImpl": "GPU実装",
+    "gpuImplDesc": "並列コンピュートシェーダー - 高速！"
   }
 }
