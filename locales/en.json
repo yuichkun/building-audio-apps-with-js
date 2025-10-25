@@ -18,5 +18,9 @@
   },
   "slide9": {
     "heading": "...not happy?"
+  },
+  "slide10": {
+    "heading": "Welcome to the world of Web Audio API 🤝",
+    "survey": "Quick survey: Who have ever used Web Audio API before?"
   }
 }

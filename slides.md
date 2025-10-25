@@ -157,11 +157,13 @@ layout: statement
 layout: center
 ---
 
-# Welcome to the world of Web Audio API 🤝
+# {{ $t('slide10.heading') }}
 
 <v-click>
-Quick survey: Who have ever used Web Audio API before?
+{{ $t('slide10.survey') }}
 </v-click>
+
+<LanguageSwitcher />
 
 ---
 layout: two-cols
