@@ -533,6 +533,23 @@ The [juce_emscripten](https://github.com/Dreamtonics/juce_emscripten) project en
 
 ---
 layout: image-right
+image: /max.png
+---
+
+# What is Max? 🎨
+
+<v-clicks>
+
+- 🎼 Visual programming environment for audio and multimedia (formerly Max/MSP)
+- 🏢 Developed by Cycling '74
+- 🔌 Connect objects with virtual cables instead of writing code
+- 🎹 Build custom synthesizers, effects, and interactive installations
+- 🌐 **RNBO exports Max patches to Web Audio (via WASM)**, VST, and more
+
+</v-clicks>
+
+---
+layout: image-right
 image: /portrait.jpg
 ---
 
