@@ -137,5 +137,8 @@
     "cpuImplDesc": "~3.9 billion operations/sec for 2s reverb - too slow for real-time",
     "gpuImpl": "GPU Implementation",
     "gpuImplDesc": "Parallel compute shader - fast enough!"
+  },
+  "slide33": {
+    "heading": "That's pretty much it"
   }
 }

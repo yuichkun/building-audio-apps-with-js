@@ -677,7 +677,9 @@ layout: MyDefault
 layout: statement
 ---
 
-# That's pretty much it
+# {{ $t('slide33.heading') }}
+
+<LanguageSwitcher />
 
 ---
 layout: image-right
