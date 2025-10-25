@@ -116,5 +116,13 @@
     "collaboration": "Collaboration with",
     "soundDesigner": "sound designer at teamLAB",
     "tryDemo": "Try the demo"
+  },
+  "slide30": {
+    "howWeBuilt": "How we built it:",
+    "list1": "Kentaro designed the DSP (audio processing) in Max",
+    "list2": "RNBO compiled the Max patch into WebAssembly",
+    "list3": "I built the UI with Svelte and integrated the WASM module",
+    "list4": "Connected UI controls to audio parameters via RNBO API",
+    "list5": "WASM delivers near-native performance, much faster than JavaScript"
   }
 }

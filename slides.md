@@ -624,17 +624,19 @@ image: /single-motion-granular.gif
 
 # single motion granular
 
-**How we built it:**
+**{{ $t('slide30.howWeBuilt') }}**
 
 <v-clicks>
 
-- 🎛️ Kentaro designed the DSP (audio processing) in Max
-- ⚙️ RNBO compiled the Max patch into WebAssembly
-- 🎨 I built the UI with Svelte and integrated the WASM module
-- 🔌 Connected UI controls to audio parameters via RNBO API
-- ⚡ **WASM delivers near-native performance, much faster than JavaScript**
+- 🎛️ {{ $t('slide30.list1') }}
+- ⚙️ {{ $t('slide30.list2') }}
+- 🎨 {{ $t('slide30.list3') }}
+- 🔌 {{ $t('slide30.list4') }}
+- ⚡ **{{ $t('slide30.list5') }}**
 
 </v-clicks>
+
+<LanguageSwitcher />
 
 ---
 layout: center

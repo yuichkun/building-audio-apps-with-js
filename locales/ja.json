@@ -116,5 +116,13 @@
     "collaboration": "コラボレーション：",
     "soundDesigner": "teamLABのサウンドデザイナー",
     "tryDemo": "デモを試す"
+  },
+  "slide30": {
+    "howWeBuilt": "やったこと",
+    "list1": "kentaroさんがMaxでDSP（音声処理）を実装",
+    "list2": "RNBOがMaxパッチをWebAssemblyにコンパイル",
+    "list3": "私がSvelteでUIを構築し、WASMモジュールを統合",
+    "list4": "RNBO API経由でUIコントロールをオーディオパラメータに接続",
+    "list5": "WASMはJavaScriptよりもはるかに高速で、ネイティブに近いパフォーマンスを実現"
   }
 }
