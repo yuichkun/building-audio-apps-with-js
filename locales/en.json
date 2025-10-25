@@ -56,5 +56,9 @@
   },
   "slide18": {
     "heading": "Fun Example: Simple Reverb"
+  },
+  "slide20": {
+    "mainThread": "Main Thread",
+    "audioThread": "Audio Thread"
   }
 }

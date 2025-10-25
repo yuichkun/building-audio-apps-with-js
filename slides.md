@@ -370,7 +370,7 @@ layout: two-cols
 
 <div class="px-2" style="--slidev-code-font-size: 8px; --slidev-code-line-height: 8px;">
 
-**Main Thread**
+**{{ $t('slide20.mainThread') }}**
 
 ```js
 // Load the reverb processor
@@ -403,7 +403,7 @@ source.start()
 
 <div class="px-2" style="--slidev-code-font-size: 8px; --slidev-code-line-height: 8px;">
 
-**Audio Thread**
+**{{ $t('slide20.audioThread') }}**
 
 ```js
 // reverb-processor.js
@@ -439,6 +439,8 @@ registerProcessor('reverb-processor', ReverbProcessor)
 ```
 
 </div>
+
+<LanguageSwitcher />
 
 ---
 layout: center

@@ -56,5 +56,9 @@
   },
   "slide18": {
     "heading": "楽しい例：シンプルなリバーブ"
+  },
+  "slide20": {
+    "mainThread": "メインスレッド",
+    "audioThread": "オーディオスレッド"
   }
 }
