@@ -22,5 +22,11 @@
   "slide10": {
     "heading": "Web Audio APIの世界へようこそ 🤝",
     "survey": "ちょっとアンケート：Web Audio APIを使ったことがある人？"
+  },
+  "slide11": {
+    "list1": "音声処理のためのJavaScript API",
+    "list2": "ノードベース",
+    "list3": "専用オーディオスレッドで動作",
+    "list4": "汎用的なビルトインノード（ゲイン、フィルター、オシレーターなど）"
   }
 }

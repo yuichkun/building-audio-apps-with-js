@@ -174,10 +174,10 @@ layout: two-cols
 <div class="">
   <ul class="flex flex-col gap-2 text-md">
   <v-clicks>
-    <li>High-level JavaScript API for audio processing</li>
-    <li>Node-based audio routing graph architecture</li>
-    <li>Runs on a separate high-priority audio thread</li>
-    <li>Built-in audio nodes for common tasks (gain, filters, oscillators, etc.)</li>
+    <li>{{ $t('slide11.list1') }}</li>
+    <li>{{ $t('slide11.list2') }}</li>
+    <li>{{ $t('slide11.list3') }}</li>
+    <li>{{ $t('slide11.list4') }}</li>
   </v-clicks>
   </ul>
 </div>
@@ -190,6 +190,8 @@ layout: two-cols
     Source: <a href="https://web.dev/articles/webaudio-intro" target="_blank">Getting started with Web Audio API - web.dev</a>
   </p>
 </div>
+
+<LanguageSwitcher />
 
 ---
 layout: center

@@ -22,5 +22,11 @@
   "slide10": {
     "heading": "Welcome to the world of Web Audio API 🤝",
     "survey": "Quick survey: Who have ever used Web Audio API before?"
+  },
+  "slide11": {
+    "list1": "High-level JavaScript API for audio processing",
+    "list2": "Node-based audio routing graph architecture",
+    "list3": "Runs on a separate high-priority audio thread",
+    "list4": "Built-in audio nodes for common tasks (gain, filters, oscillators, etc.)"
   }
 }
