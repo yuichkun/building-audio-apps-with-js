@@ -498,17 +498,21 @@ layout: MyDefault
 
 <DelayGlitchDemo />
 
+<LanguageSwitcher />
+
 ---
 layout: center
 ---
 
-# Need more speed?
+# {{ $t('slide24.heading') }}
 
 <v-click>
 <div class="pt-8">
-...WebAssembly has you covered 🚀
+{{ $t('slide24.answer') }}
 </div>
 </v-click>
+
+<LanguageSwitcher />
 
 ---
 layout: MyDefault
