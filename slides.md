@@ -547,6 +547,40 @@ image: /max.png
 - 🌐 **RNBO exports Max patches to Web Audio (via WASM)**, VST, and more
 
 </v-clicks>
+---
+layout: image-right
+image: /kentaro.jpg
+---
+
+# Made with RNBO
+
+<div class="text-center mt-8">
+  <p class="text-xl text-gray-400 mb-8">
+    Collaboration with <a href="https://kentaro.tools/" target="_blank" class="">kentaro</a>, <br /> sound designer at teamLAB
+  </p>
+  <a href="https://kentaro-granular-web.vercel.app/" target="_blank" class="text-2xl">
+    🌐 Try the demo
+  </a>
+</div>
+
+---
+layout: image-right
+image: /single-motion-granular.gif
+---
+
+# single motion granular
+
+**How we built it:**
+
+<v-clicks>
+
+- 🎛️ Kentaro designed the DSP (audio processing) in Max
+- ⚙️ RNBO compiled the Max patch into WebAssembly
+- 🎨 I built the UI with Svelte and integrated the WASM module
+- 🔌 Connected UI controls to audio parameters via RNBO API
+- ⚡ **WASM delivers near-native performance, much faster than JavaScript**
+
+</v-clicks>
 
 ---
 layout: image-right
