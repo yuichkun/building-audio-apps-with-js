@@ -90,5 +90,12 @@
     "popularOptions": "人気のオプション：",
     "juceDesc": "プロフェッショナルなオーディオフレームワーク（Synthesizer Vで使用）",
     "rnboDesc": "Max/MSPパッチをWeb Audioにエクスポート"
+  },
+  "slide26": {
+    "heading": "JUCEとは？ 🎵",
+    "list1": "オーディオアプリケーションとプラグインを構築するためのC++フレームワーク",
+    "list2": "Adobe、Steinberg、Universal Audio、Wavesなどが使用",
+    "list3": "クロスプラットフォーム：Windows、macOS、Linux、iOS、Android",
+    "list4": "主要なプラグインフォーマットをすべてサポート（VST、AU、AAX）"
   }
 }

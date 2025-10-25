@@ -90,5 +90,12 @@
     "popularOptions": "Popular options:",
     "juceDesc": "Professional audio framework (used by Synthesizer V)",
     "rnboDesc": "Export Max/MSP patches to Web Audio"
+  },
+  "slide26": {
+    "heading": "What is JUCE? 🎵",
+    "list1": "C++ framework for building audio applications and plugins",
+    "list2": "Used by Adobe, Steinberg, Universal Audio, Waves, and more",
+    "list3": "Cross-platform: Windows, macOS, Linux, iOS, Android",
+    "list4": "Supports all major plugin formats (VST, AU, AAX)"
   }
 }

@@ -549,16 +549,18 @@ layout: image-right
 image: /juce.png
 ---
 
-# What is JUCE? 🎵
+# {{ $t('slide26.heading') }}
 
 <v-clicks>
 
-- 🛠️ C++ framework for building audio applications and plugins
-- 🎛️ Used by Adobe, Steinberg, Universal Audio, Waves, and more
-- 📱 Cross-platform: Windows, macOS, Linux, iOS, Android
-- 🔌 Supports all major plugin formats (VST, AU, AAX)
+- 🛠️ {{ $t('slide26.list1') }}
+- 🎛️ {{ $t('slide26.list2') }}
+- 📱 {{ $t('slide26.list3') }}
+- 🔌 {{ $t('slide26.list4') }}
 
 </v-clicks>
+
+<LanguageSwitcher />
 
 ---
 layout: MyDefault
