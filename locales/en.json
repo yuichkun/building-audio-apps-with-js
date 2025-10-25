@@ -73,5 +73,9 @@
     "list3": "Exceeding this budget causes",
     "list3b": "audio glitches",
     "source": "Source:"
+  },
+  "slide22": {
+    "heading": "Live Demo: Exceeding the 3ms Budget",
+    "description": "Use the slider to add artificial processing delay. Watch (and hear!) what happens when you go beyond 3ms."
   }
 }

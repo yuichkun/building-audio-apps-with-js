@@ -468,10 +468,10 @@ layout: center
 layout: MyDefault
 ---
 
-# Live Demo: Exceeding the 3ms Budget
+# {{ $t('slide22.heading') }}
 
 <div class="text-sm text-gray-500 mb-3">
-Use the slider to add artificial processing delay. Watch (and hear!) what happens when you go beyond 3ms.
+{{ $t('slide22.description') }}
 </div>
 
 ```js
@@ -489,6 +489,7 @@ Use the slider to add artificial processing delay. Watch (and hear!) what happen
   }
 ```
 
+<LanguageSwitcher />
 
 ---
 layout: MyDefault
