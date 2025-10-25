@@ -103,6 +103,8 @@ layout: two-cols
   <audio src="/sample.wav" controls></audio>
 </div>
 
+<LanguageSwitcher />
+
 ---
 layout: two-cols
 ---
@@ -133,17 +135,23 @@ const playSound = () => {
   <SimpleAudioButton />
 </div>
 
+<LanguageSwitcher />
+
 ---
 layout: statement
 ---
 
 # 🎉
 
+<LanguageSwitcher />
+
 ---
 layout: statement
 ---
 
-# ...not happy?
+# {{ $t('slide9.heading') }}
+
+<LanguageSwitcher />
 
 ---
 layout: center
