@@ -1,0 +1,479 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>WebAudio Worklet + WebGPU Convolution Reverb (Mono Out)</title>
+<style>
+  body { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; margin: 20px; }
+  .drop { border: 2px dashed #888; padding: 24px; border-radius: 12px; text-align: center; color:#555;}
+  .row { display:flex; gap:12px; align-items:center; margin:12px 0;}
+  label { min-width: 90px; }
+  button { padding:8px 14px; }
+  input[type="range"] { width: 200px; }
+  small { color:#666; }
+</style>
+</head>
+<body>
+  <h1>Convolution Reverb (AudioWorklet + WebGPU)</h1>
+  <div class="drop" id="drop">ここに音声ファイルをドラッグ&ドロップ<br><small>mp3 / wav / m4a 等</small></div>
+
+  <div class="row">
+    <button id="play" disabled>▶︎ 再生</button>
+    <button id="stop" disabled>■ 停止</button>
+    <span id="status">ファイル未読込</span>
+  </div>
+
+  <div class="row">
+    <label for="ir">IRプリセット</label>
+    <select id="ir">
+      <option value="room">Room (短め)</option>
+      <option value="hall">Hall (長め)</option>
+      <option value="plate">Plate-ish</option>
+      <option value="box">Wood Box</option>
+    </select>
+    <button id="regen">IR反映</button>
+    <small id="irInfo"></small>
+  </div>
+
+  <div class="row">
+    <label for="wet">Wet</label>
+    <input id="wet" type="range" min="0" max="1" step="0.01" value="0.5">
+    <span id="wetVal">0.50</span>
+  </div>
+
+  <div class="row">
+    <label>WebGPU</label>
+    <span id="gpuState">Checking…</span>
+  </div>
+
+<script type="module">
+/* ====== Constants ====== */
+const BLOCK = 2048;            // 1ブロックあたりのフレーム数（=レイテンシ）
+const MAX_IR_SEC = 3.0;        // IRの最大長
+const WORKLET_NAME = 'gpu-convolver-processor';
+
+/* ====== Basic UI ====== */
+const $drop = document.getElementById('drop');
+const $play = document.getElementById('play');
+const $stop = document.getElementById('stop');
+const $status = document.getElementById('status');
+const $irSel = document.getElementById('ir');
+const $regen = document.getElementById('regen');
+const $irInfo = document.getElementById('irInfo');
+const $wet = document.getElementById('wet');
+const $wetVal = document.getElementById('wetVal');
+const $gpuState = document.getElementById('gpuState');
+
+$wet.addEventListener('input', () => {
+  $wetVal.textContent = (+$wet.value).toFixed(2);
+  updateMix(+$wet.value);
+});
+
+/* ====== WebGPU Setup ====== */
+let device, queue, adapter;
+async function initWebGPU() {
+  if (!('gpu' in navigator)) {
+    $gpuState.textContent = '未対応';
+    throw new Error('WebGPU not supported');
+  }
+  adapter = await navigator.gpu.requestAdapter();
+  if (!adapter) throw new Error('No GPU adapter');
+  device = await adapter.requestDevice();
+  queue = device.queue;
+  $gpuState.textContent = 'OK';
+}
+const wgsl = /* wgsl */`
+struct Params {
+  irLen : u32,
+  prevLen : u32,
+  blockSize : u32,
+};
+@group(0) @binding(0) var<storage, read> extIn : array<f32>;        // length = prevLen + block
+@group(0) @binding(1) var<storage, read> ir : array<f32>;           // length = irLen
+@group(0) @binding(2) var<storage, read_write> outBuf : array<f32>; // length = block
+@group(0) @binding(3) var<uniform> P : Params;
+
+@compute @workgroup_size(128)
+fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
+  let i = gid.x;
+  if (i >= P.blockSize) { return; }
+  var acc : f32 = 0.0;
+  let base = P.prevLen + i;
+  for (var k:u32 = 0u; k < P.irLen; k = k + 1u) {
+    acc = acc + extIn[base - k] * ir[k];
+  }
+  outBuf[i] = acc;
+}
+`;
+
+/* ====== Audio / Worklet ====== */
+let ctx, workletNode, sourceNode;
+let wetGain, dryGain, dryDelay, splitter, gL, gR, drySum;
+let gpuPipeline, irData = null, prevTail = null, irLen = 0;
+let extGPU, irGPU, outGPU, paramGPU, bindGroup;
+let playing = false;
+
+async function ensureCtx() {
+  if (!ctx) {
+    ctx = new (window.AudioContext || window.webkitAudioContext)();
+
+    // --- Worklet登録（GPU側Wetを返す） ---
+    const workletCode = `
+class GPUConvolverProcessor extends AudioWorkletProcessor {
+  constructor() {
+    super();
+    this.BLOCK = ${BLOCK};
+    this.inputBuf = new Float32Array(this.BLOCK);
+    this.inputFill = 0;
+    this.outputQueue = [];
+    this.port.onmessage = (e) => {
+      const m = e.data;
+      if (m?.type === 'outBlock') this.outputQueue.push(m.data);
+    };
+  }
+  static get parameterDescriptors(){ return []; }
+
+  process(inputs, outputs) {
+    const input = inputs[0];
+    const output = outputs[0];
+    const chL = input[0] || new Float32Array(128);
+    const chR = input[1] || null;
+
+    // 128fずつ蓄積（ステレオ→モノ：-6dBサミング）
+    const n = chL.length || 128;
+    for (let i=0; i<n; i++) {
+      const l = chL[i] || 0;
+      const r = chR ? chR[i] : 0;
+      this.inputBuf[this.inputFill++] = (l + r) * 0.5;
+    }
+
+    // BLOCK 分溜まったらメインへ送出
+    if (this.inputFill >= this.BLOCK) {
+      const block = this.inputBuf.slice(0, this.BLOCK);
+      this.port.postMessage({ type:'inBlock', data:block }, [block.buffer]);
+      this.inputFill = 0;
+    }
+
+    // 出力：GPU結果（Wet）のみ（なければ無音）
+    const outL = output[0];
+    const have = this.outputQueue.length ? this.outputQueue[0] : null;
+    if (have && have.length >= n) {
+      const chunk = have.subarray(0, n);
+      outL.set(chunk);
+      if (have.length === n) {
+        this.outputQueue.shift();
+      } else {
+        const rest = have.subarray(n);
+        const copy = new Float32Array(rest.length);
+        copy.set(rest);
+        this.outputQueue[0] = copy;
+      }
+    } else {
+      outL.fill(0);
+    }
+
+    return true;
+  }
+}
+registerProcessor('${WORKLET_NAME}', GPUConvolverProcessor);
+`;
+    const blob = new Blob([workletCode], {type:'application/javascript'});
+    await ctx.audioWorklet.addModule(URL.createObjectURL(blob));
+
+    workletNode = new AudioWorkletNode(ctx, WORKLET_NAME, {
+      numberOfInputs: 1,
+      numberOfOutputs: 1,
+      outputChannelCount: [1], // mono wet
+    });
+
+    // --- Dry/Wetノード構成 ---
+    wetGain = ctx.createGain();
+    dryGain = ctx.createGain();
+    dryDelay = ctx.createDelay(1.0); // 1秒最大なら十分
+    dryDelay.delayTime.value = BLOCK / ctx.sampleRate; // GPUの1ブロック遅延と整合
+
+    // ドライのモノサミング：split -> 0.5 + 0.5 -> 1chに合流
+    splitter = ctx.createChannelSplitter(2);
+    gL = ctx.createGain(); gL.gain.value = 0.5;
+    gR = ctx.createGain(); gR.gain.value = 0.5;
+    drySum = ctx.createGain(); // 2つのmono接続を同一入力に突っ込む＝加算→1ch
+
+    // 初期ミックス
+    updateMix(+$wet.value);
+  }
+}
+
+function updateMix(v) {
+  if (!wetGain || !dryGain) return;
+  wetGain.gain.value = v;         // 0..1
+  dryGain.gain.value = 1 - v;
+}
+
+/* ====== IR synthesis ====== */
+function makeIR(kind, sampleRate) {
+  const sec =
+    kind === 'room' ? 0.6 :
+    kind === 'hall' ? 2.2 :
+    kind === 'plate' ? 1.2 :
+    kind === 'box' ? 0.35 : 1.0;
+
+  const N = Math.min(Math.floor(sec * sampleRate), Math.floor(MAX_IR_SEC * sampleRate));
+  const out = new Float32Array(N);
+
+  // 早期反射
+  const early = (idx, gain) => { if (idx >= 0 && idx < N) out[idx] += gain; };
+  if (kind === 'room') {
+    early(Math.floor(0.004*sampleRate), 0.6);
+    early(Math.floor(0.009*sampleRate), 0.4);
+    early(Math.floor(0.013*sampleRate), 0.3);
+  } else if (kind === 'hall') {
+    early(Math.floor(0.010*sampleRate), 0.5);
+    early(Math.floor(0.021*sampleRate), 0.35);
+    early(Math.floor(0.035*sampleRate), 0.25);
+  } else if (kind === 'plate') {
+    early(Math.floor(0.002*sampleRate), 0.7);
+    early(Math.floor(0.006*sampleRate), 0.5);
+  } else if (kind === 'box') {
+    early(Math.floor(0.0015*sampleRate), 0.8);
+    early(Math.floor(0.0032*sampleRate), 0.6);
+    early(Math.floor(0.0050*sampleRate), 0.45);
+  }
+
+  // 本体：ノイズ * exp(-t/τ) + 簡易トーン
+  const tau =
+    kind === 'room' ? 0.25 :
+    kind === 'hall' ? 0.9 :
+    kind === 'plate' ? 0.45 :
+    kind === 'box' ? 0.12 : 0.3;
+
+  const tone = (k) => {
+    const f = k / N;
+    if (kind === 'plate') return 0.6 + 0.8*f;
+    if (kind === 'box') return 0.9 - 0.5*Math.abs(f-0.4);
+    if (kind === 'hall') return 0.8 + 0.2*f;
+    return 1.0;
+  };
+
+  let a1 = 0, a2 = 0;
+  for (let i=0; i<N; i++) {
+    const t = i / sampleRate;
+    const env = Math.exp(-t / tau);
+    const n = (Math.random()*2-1) * 0.6;
+    a1 = a1*0.97 + n*0.03;
+    a2 = a2*0.9 + a1*0.1;
+    out[i] += a2 * env * tone(i);
+  }
+
+  // 正規化
+  let peak = 1e-9;
+  for (let i=0;i<N;i++) peak = Math.max(peak, Math.abs(out[i]));
+  const g = 1 / peak;
+  for (let i=0;i<N;i++) out[i] *= g;
+
+  return out;
+}
+
+function setIR(kind) {
+  const sr = ctx?.sampleRate || 48000;
+  irData = makeIR(kind, sr);
+  irLen = irData.length;
+  prevTail = new Float32Array(Math.max(0, irLen-1));
+  $irInfo.textContent = ` / IR length: ${(irLen/sr).toFixed(3)}s (${irLen} samples)`;
+}
+
+/* ====== GPU pipeline ====== */
+async function buildPipeline() {
+  const module = device.createShaderModule({ code: wgsl });
+  gpuPipeline = device.createComputePipeline({ layout: 'auto', compute: { module, entryPoint: 'main' } });
+}
+
+function ensureGPUResources(blockSize, irLenNow) {
+  const prevLenNow = Math.max(0, irLenNow - 1);
+  const extLen = prevLenNow + blockSize;
+
+  function make(size, usage) {
+    return device.createBuffer({ size: size*4, usage, mappedAtCreation:false });
+  }
+  extGPU = make(extLen, GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST);
+  irGPU  = make(irLenNow, GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST);
+  outGPU = make(blockSize, GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC);
+
+  const paramArr = new Uint32Array([irLenNow, prevLenNow, blockSize]);
+  paramGPU = device.createBuffer({ size: 12, usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST });
+  queue.writeBuffer(paramGPU, 0, paramArr.buffer);
+
+  bindGroup = device.createBindGroup({
+    layout: gpuPipeline.getBindGroupLayout(0),
+    entries: [
+      { binding:0, resource: { buffer: extGPU }},
+      { binding:1, resource: { buffer: irGPU }},
+      { binding:2, resource: { buffer: outGPU }},
+      { binding:3, resource: { buffer: paramGPU }},
+    ]
+  });
+
+  queue.writeBuffer(irGPU, 0, irData.buffer);
+}
+
+/* ====== Main <-> Worklet streaming glue (WetのみGPU計算) ====== */
+let pendingGPU = false;
+let pendingInBlock = null;
+
+function attachGPUStream() {
+  workletNode.port.addEventListener('message', async (e) => {
+    const msg = e.data;
+    if (msg?.type === 'inBlock') {
+      pendingInBlock = msg.data;   // Float32Array length=BLOCK (mono)
+      if (!pendingGPU) runOneGPU();
+    }
+  });
+  workletNode.port.start();
+}
+
+async function runOneGPU() {
+  if (!pendingInBlock || pendingGPU || !playing) return;
+  pendingGPU = true;
+
+  const prevLenNow = prevTail.length;
+  const ext = new Float32Array(prevLenNow + pendingInBlock.length);
+  if (prevLenNow) ext.set(prevTail, 0);
+  ext.set(pendingInBlock, prevLenNow);
+
+  queue.writeBuffer(extGPU, 0, ext.buffer);
+
+  const encoder = device.createCommandEncoder();
+  const pass = encoder.beginComputePass();
+  pass.setPipeline(gpuPipeline);
+  pass.setBindGroup(0, bindGroup);
+  pass.dispatchWorkgroups(Math.ceil(BLOCK / 128));
+  pass.end();
+
+  const readBuf = device.createBuffer({
+    size: BLOCK*4,
+    usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ
+  });
+  encoder.copyBufferToBuffer(outGPU, 0, readBuf, 0, BLOCK*4);
+
+  queue.submit([encoder.finish()]);
+  await readBuf.mapAsync(GPUMapMode.READ);
+  const out = new Float32Array(readBuf.getMappedRange().slice(0));
+  readBuf.unmap();
+
+  // GPU結果（Wetのみ）をワークレットへ返す
+  workletNode.port.postMessage({ type:'outBlock', data: out }, [out.buffer]);
+
+  // prevTail 更新（次ブロック用）
+  if (prevLenNow) {
+    prevTail.set(ext.subarray(ext.length - prevLenNow));
+  }
+
+  pendingInBlock = null;
+  pendingGPU = false;
+  if (playing && !pendingGPU && pendingInBlock) runOneGPU();
+}
+
+/* ====== File decoding and graph接続 ====== */
+async function loadFile(file) {
+  await ensureCtx();
+  const arr = await file.arrayBuffer();
+  const buf = await ctx.decodeAudioData(arr);
+
+  // 既存ソースをクリーンアップ
+  try { sourceNode?.stop(); } catch(_) {}
+  sourceNode?.disconnect();
+
+  // 新規ソース
+  sourceNode = ctx.createBufferSource();
+  sourceNode.buffer = buf;
+  sourceNode.loop = false;
+
+  // --- Graph 構築 ---
+  // Wet: source -> worklet(mono wet) -> wetGain -> destination
+  sourceNode.connect(workletNode);
+  workletNode.connect(wetGain).connect(ctx.destination);
+
+  // Dry (mono sum + delay): source -> splitter(2) -> (0.5,0.5) -> drySum -> dryDelay -> dryGain -> dest
+  sourceNode.connect(splitter);
+  splitter.connect(gL, 0); gL.connect(drySum);
+  splitter.connect(gR, 1); gR.connect(drySum);
+  drySum.connect(dryDelay).connect(dryGain).connect(ctx.destination);
+
+  $status.textContent = `読込完了: ${file.name} (${buf.sampleRate} Hz, ${buf.numberOfChannels}ch, ${buf.length} frames)`;
+  $play.disabled = false;
+  $stop.disabled = false;
+}
+
+/* ====== UI handlers ====== */
+$drop.addEventListener('dragover', (e) => {
+  e.preventDefault();
+  $drop.style.background = '#fafafa';
+});
+$drop.addEventListener('dragleave', () => {
+  $drop.style.background = '';
+});
+$drop.addEventListener('drop', async (e) => {
+  e.preventDefault();
+  $drop.style.background = '';
+  const f = e.dataTransfer?.files?.[0];
+  if (!f) return;
+  try {
+    if (!device) await initWebGPU();
+    await ensureCtx();
+    if (!gpuPipeline) await buildPipeline();
+    setIR($irSel.value);
+    ensureGPUResources(BLOCK, irLen);
+    attachGPUStream();
+    await loadFile(f);
+  } catch (err) {
+    console.error(err);
+    alert('初期化に失敗しました: ' + err.message);
+  }
+});
+
+$play.addEventListener('click', async () => {
+  if (!sourceNode || !ctx) return;
+  if (ctx.state !== 'running') await ctx.resume();
+
+  // 再生ごとに prevTail をリセットし、Delayも再設定
+  prevTail = new Float32Array(Math.max(0, irLen-1));
+  dryDelay.delayTime.value = BLOCK / ctx.sampleRate;
+
+  // BufferSourceは再利用不可なので作り直し
+  const old = sourceNode;
+  sourceNode = ctx.createBufferSource();
+  sourceNode.buffer = old.buffer;
+  sourceNode.loop = false;
+
+  // 再接続（ノードは既に作成済み）
+  sourceNode.connect(workletNode);
+  sourceNode.connect(splitter);
+  splitter.connect(gL, 0); gL.connect(drySum);
+  splitter.connect(gR, 1); gR.connect(drySum);
+  // wet/dry の下流接続は固定済み
+
+  sourceNode.start();
+  playing = true;
+  $status.textContent = '再生中（1ブロック遅延あり）';
+});
+
+$stop.addEventListener('click', () => {
+  if (!ctx) return;
+  try { sourceNode?.stop(); } catch(_) {}
+  playing = false;
+  $status.textContent = '停止';
+});
+
+$regen.addEventListener('click', () => {
+  if (!ctx || !device) return;
+  setIR($irSel.value);
+  ensureGPUResources(BLOCK, irLen);
+  // paramsの再書き込み
+  queue.writeBuffer(paramGPU, 0, new Uint32Array([irLen, Math.max(0, irLen-1), BLOCK]).buffer);
+});
+
+/* 初期化（WebGPUチェックだけ先に） */
+initWebGPU().catch(()=>{ /* UIは既に更新 */ });
+</script>
+</body>
+</html>

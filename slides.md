@@ -583,6 +583,37 @@ image: /single-motion-granular.gif
 </v-clicks>
 
 ---
+layout: center
+---
+
+# Experimental: WebGPU-Accelerated Audio
+
+<v-click>
+WebGPU brings GPU compute to the browser - perfect for heavy DSP
+</v-click>
+
+---
+layout: MyDefault
+---
+
+# Convolution Reverb with WebGPU
+
+<div class="text-sm mb-4">
+
+**Convolution** = multiply input signal with impulse response (IR)
+
+<v-clicks>
+
+- **CPU Implementation**: ~3.9 billion operations/sec for 2s reverb - too slow for real-time
+- **GPU Implementation**: Parallel compute shader - fast enough!
+
+</v-clicks>
+
+</div>
+
+<ConvolutionReverbDemo />
+
+---
 layout: image-right
 image: /portrait.jpg
 ---
