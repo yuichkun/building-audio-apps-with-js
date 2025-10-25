@@ -686,16 +686,16 @@ layout: image-right
 image: /portrait.jpg
 ---
 
-# Who am I?
+# {{ $t('slide34.heading') }}
 <v-clicks>
 
-- 🎓 Studied composition at Tokyo University of the Arts
-- 🏢 Founder and creative lead at [Escentier, LLC](https://www.escentier.com).
-- We deliver:
-  - 🎥 Video production
-  - ✨ 3D graphics
-  - 🎵 Tailored music and sound design
-  - 💻 Web apps, games, and other digital experiences
+- 🎓 {{ $t('slide34.list1') }}
+- 🏢 {{ $t('slide34.list2') }} [Escentier, LLC](https://www.escentier.com).
+- {{ $t('slide34.weDeliver') }}
+  - 🎥 {{ $t('slide34.video') }}
+  - ✨ {{ $t('slide34.graphics') }}
+  - 🎵 {{ $t('slide34.music') }}
+  - 💻 {{ $t('slide34.webApps') }}
 
 </v-clicks>
 
@@ -705,20 +705,24 @@ image: /portrait.jpg
 layout: statement
 ---
 
-# Lastly...
+# {{ $t('slide35.heading') }}
+
+<LanguageSwitcher />
 
 ---
 layout: image-left
 image: /anthony.jpg
 ---
 
-# Special Thanks
+# {{ $t('slide36.heading') }}
 
 <v-clicks>
 
-**Anthony Fu** - a friend from bouldering 🧗 and creator of [Slidev](https://sli.dev/)
+**Anthony Fu** - {{ $t('slide36.anthony') }} [Slidev](https://sli.dev/)
 
-This presentation is powered by [Slidev](https://sli.dev/) - the only tool that makes sounds and i18n in slides possible!
+{{ $t('slide36.powered') }} [Slidev](https://sli.dev/) - {{ $t('slide36.slidevDesc') }}
 
 [antfu.me](https://antfu.me/)
 </v-clicks>
+
+<LanguageSwitcher />

@@ -140,5 +140,24 @@
   },
   "slide33": {
     "heading": "That's pretty much it"
+  },
+  "slide34": {
+    "heading": "Who am I?",
+    "list1": "Studied composition at Tokyo University of the Arts",
+    "list2": "Founder and creative lead at",
+    "weDeliver": "We deliver:",
+    "video": "Video production",
+    "graphics": "3D graphics",
+    "music": "Tailored music and sound design",
+    "webApps": "Web apps, games, and other digital experiences"
+  },
+  "slide35": {
+    "heading": "Lastly..."
+  },
+  "slide36": {
+    "heading": "Special Thanks",
+    "anthony": "a friend from bouldering 🧗 and creator of",
+    "powered": "This presentation is powered by",
+    "slidevDesc": "the only tool that makes sounds and i18n in slides possible!"
   }
 }

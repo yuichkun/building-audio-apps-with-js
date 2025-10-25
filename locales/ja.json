@@ -140,5 +140,24 @@
   },
   "slide33": {
     "heading": "以上です"
+  },
+  "slide34": {
+    "heading": "私について",
+    "list1": "東京藝術大学で作曲を専攻",
+    "list2": "Escentier合同会社を創業: ",
+    "weDeliver": "事業内容:",
+    "video": "映像制作",
+    "graphics": "3D CG",
+    "music": "音楽/サウンドデザイン",
+    "webApps": "Webアプリ、ゲーム、その他デジタルコンテンツ制作"
+  },
+  "slide35": {
+    "heading": "最後に..."
+  },
+  "slide36": {
+    "heading": "スペシャルサンクス",
+    "anthony": "ボルダリング仲間🧗でありSlidevの作者",
+    "powered": "このプレゼンテーションは",
+    "slidevDesc": "で作られています - スライドで音とi18nを可能にする唯一のツール！"
   }
 }
