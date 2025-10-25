@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useWebGPUConvolution, type IRPreset } from '../composables/useWebGPUConvolution'
 import { useConvolutionReverb } from '../composables/useConvolutionReverb'
 import WaveformVisualizer from './WaveformVisualizer.vue'
@@ -8,13 +8,29 @@ const gpu = useWebGPUConvolution()
 const audio = useConvolutionReverb()
 
 const currentPreset = ref<IRPreset>('room')
-const wetValue = ref(0.5)
+const wetValue = ref(0)
+
+// dB scale for volume: -60dB to 0dB
+const MIN_DB = -60
+const MAX_DB = 0
+const volumeDb = ref(-9) // Start at -12dB (reasonable default)
+
+// Convert dB to linear gain: gain = 10^(dB/20)
+function dbToGain(db: number): number {
+  return Math.pow(10, db / 20)
+}
+
+// Computed display value for volume
+const displayDb = computed(() => {
+  return volumeDb.value === MIN_DB ? '-∞' : `${volumeDb.value.toFixed(1)} dB`
+})
 
 async function initialize() {
   try {
     await gpu.initializeGPU()
     if (gpu.isSupported.value) {
       await audio.loadAudioFile('/sample.wav')
+      audio.setVolume(dbToGain(volumeDb.value)) // Set initial volume
     }
   } catch (err) {
     console.error('Initialization failed:', err)
@@ -31,6 +47,11 @@ function updateIR() {
 
 function updateWetMix() {
   audio.setWetMix(wetValue.value)
+}
+
+function updateVolume() {
+  const gain = dbToGain(volumeDb.value)
+  audio.setVolume(gain)
 }
 
 function handleKeyDown(e: KeyboardEvent) {
@@ -76,12 +97,21 @@ onUnmounted(() => {
             <option value="box">Wood Box</option>
           </select>
         </label>
-
-        <label class="control-label">
-          Wet Mix: {{ wetValue.toFixed(2) }}
+      </div>
+      <div class="flex flex-col gap-2">
+        <div class="control-group">
+          <span class="control-label-text">Wet Mix:</span>
+          <span class="control-value">{{ wetValue.toFixed(2) }}</span>
           <input type="range" v-model.number="wetValue" @input="updateWetMix" min="0" max="1" step="0.01"
-            class="wet-slider" />
-        </label>
+            class="control-slider" />
+        </div>
+
+        <div class="control-group">
+          <span class="control-label-text">Volume:</span>
+          <span class="control-value">{{ displayDb }}</span>
+          <input type="range" v-model.number="volumeDb" @input="updateVolume" :min="MIN_DB" :max="MAX_DB" step="1"
+            class="control-slider" />
+        </div>
       </div>
 
       <!-- Waveform Visualization -->
@@ -172,7 +202,27 @@ onUnmounted(() => {
   font-size: 0.875rem;
 }
 
-.wet-slider {
+.control-group {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.control-label-text {
+  min-width: 70px;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.control-value {
+  min-width: 80px;
+  font-size: 0.875rem;
+  font-family: monospace;
+  text-align: right;
+  color: #42b883;
+}
+
+.control-slider {
   width: 150px;
 }
 

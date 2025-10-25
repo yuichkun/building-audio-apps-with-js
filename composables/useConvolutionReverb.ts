@@ -9,6 +9,7 @@ export interface UseConvolutionReverbReturn {
   isPlaying: Readonly<ReturnType<typeof ref<boolean>>>
   isLoading: Readonly<ReturnType<typeof ref<boolean>>>
   wetMix: Readonly<ReturnType<typeof ref<number>>>
+  volume: Readonly<ReturnType<typeof ref<number>>>
   audioReady: Readonly<ReturnType<typeof ref<boolean>>>
   irPreset: Readonly<ReturnType<typeof ref<IRPreset>>>
   outputNode: Readonly<ReturnType<typeof ref<GainNode | null>>>
@@ -16,6 +17,7 @@ export interface UseConvolutionReverbReturn {
   loadAudioFile: (url: string) => Promise<void>
   trigger: () => void
   setWetMix: (value: number) => void
+  setVolume: (value: number) => void
   setIRPreset: (preset: IRPreset) => void
 }
 
@@ -27,6 +29,7 @@ export function useConvolutionReverb(): UseConvolutionReverbReturn {
   const isPlaying = ref(false)
   const isLoading = ref(false)
   const wetMix = ref(0.5)
+  const volume = ref(0.5) // Master volume control
   const audioReady = ref(false)
   const irPreset = ref<IRPreset>('room')
   const outputNode = ref<GainNode | null>(null)
@@ -48,6 +51,7 @@ export function useConvolutionReverb(): UseConvolutionReverbReturn {
   let gR: GainNode | null = null
   let drySum: GainNode | null = null
   let masterOut: GainNode | null = null
+  let limiter: DynamicsCompressorNode | null = null
 
   // GPU processing state
   let prevTail: Float32Array | null = null
@@ -113,7 +117,10 @@ class GPUConvolverProcessor extends AudioWorkletProcessor {
     const have = this.outputQueue.length ? this.outputQueue[0] : null;
     if (have && have.length >= n) {
       const chunk = have.subarray(0, n);
-      outL.set(chunk);
+      // Hard clip to prevent any possibility of clipping
+      for (let i = 0; i < chunk.length; i++) {
+        outL[i] = Math.max(-0.95, Math.min(0.95, chunk[i]));
+      }
       if (have.length === n) {
         this.outputQueue.shift();
       } else {
@@ -172,6 +179,16 @@ registerProcessor('${WORKLET_NAME}', GPUConvolverProcessor);
 
     // Master output (for visualization)
     masterOut = ctx.createGain()
+    masterOut.gain.value = volume.value // Set initial volume without boost
+
+    // Brick wall limiter to prevent clipping
+    limiter = ctx.createDynamicsCompressor()
+    limiter.threshold.value = -6 // Start limiting at -6dB
+    limiter.knee.value = 0 // Hard knee for brick wall limiting
+    limiter.ratio.value = 100 // Very high ratio for brick wall limiting (100:1)
+    limiter.attack.value = 0.0001 // Very fast attack (0.1ms)
+    limiter.release.value = 0.01 // Fast release (10ms)
+
     outputNode.value = masterOut
 
     // Set initial wet/dry mix
@@ -251,13 +268,21 @@ registerProcessor('${WORKLET_NAME}', GPUConvolverProcessor);
   }
 
   /**
-   * Update wet/dry mix
+   * Update wet/dry mix using equal-power crossfade
    */
   function updateWetDryMix(value: number): void {
     if (!wetGain || !dryGain) return
 
-    wetGain.gain.value = value
-    dryGain.gain.value = 1 - value
+    // Equal-power crossfade for more natural mixing
+    // Using cosine curves to maintain perceived loudness
+    const angle = value * Math.PI / 2
+    wetGain.gain.value = Math.sin(angle) * 0.4 // Scale down wet signal to prevent clipping
+    dryGain.gain.value = Math.cos(angle)
+
+    // Set master volume without boost
+    if (masterOut) {
+      masterOut.gain.value = volume.value
+    }
   }
 
   /**
@@ -293,7 +318,7 @@ registerProcessor('${WORKLET_NAME}', GPUConvolverProcessor);
    * Trigger one-shot playback
    */
   function trigger(): void {
-    if (!ctx || !audioBuffer || !workletNode || !wetGain || !dryGain || !drySum || !dryDelay || !splitter || !gL || !gR || !masterOut) {
+    if (!ctx || !audioBuffer || !workletNode || !wetGain || !dryGain || !drySum || !dryDelay || !splitter || !gL || !gR || !masterOut || !limiter) {
       console.error('Audio system not ready')
       return
     }
@@ -340,10 +365,11 @@ registerProcessor('${WORKLET_NAME}', GPUConvolverProcessor);
 
     // Setup audio graph if not already connected
     if (!audioGraphConnected) {
-      // Wet path: source → worklet → wetGain → masterOut → destination
+      // Wet path: source → worklet → wetGain → masterOut → limiter → destination
       workletNode.connect(wetGain)
       wetGain.connect(masterOut)
-      masterOut.connect(ctx.destination)
+      masterOut.connect(limiter!)
+      limiter!.connect(ctx.destination)
 
       // Dry path connections (static part)
       splitter.connect(gL, 0)
@@ -378,6 +404,16 @@ registerProcessor('${WORKLET_NAME}', GPUConvolverProcessor);
   function setWetMix(value: number): void {
     wetMix.value = Math.max(0, Math.min(1, value))
     updateWetDryMix(wetMix.value)
+  }
+
+  /**
+   * Set master volume
+   */
+  function setVolume(value: number): void {
+    volume.value = Math.max(0, Math.min(1, value))
+    if (masterOut) {
+      masterOut.gain.value = volume.value // Set volume without boost
+    }
   }
 
   /**
@@ -423,6 +459,7 @@ registerProcessor('${WORKLET_NAME}', GPUConvolverProcessor);
     gR = null
     drySum = null
     masterOut = null
+    limiter = null
     outputNode.value = null
     prevTail = null
     pendingInBlock = null
@@ -446,6 +483,7 @@ registerProcessor('${WORKLET_NAME}', GPUConvolverProcessor);
     isPlaying,
     isLoading,
     wetMix,
+    volume,
     audioReady,
     irPreset,
     outputNode,
@@ -453,6 +491,7 @@ registerProcessor('${WORKLET_NAME}', GPUConvolverProcessor);
     loadAudioFile,
     trigger,
     setWetMix,
+    setVolume,
     setIRPreset,
   }
 }
