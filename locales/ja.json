@@ -124,5 +124,9 @@
     "list3": "私がSvelteでUIを構築し、WASMモジュールを統合",
     "list4": "RNBO API経由でUIコントロールをオーディオパラメータに接続",
     "list5": "WASMはJavaScriptよりもはるかに高速で、ネイティブに近いパフォーマンスを実現"
+  },
+  "slide31": {
+    "heading": "実験的：WebGPU支援DSP",
+    "description": "WebGPUがGPUの力をブラウザにもたらす - 重いDSPに最適"
   }
 }

@@ -642,11 +642,13 @@ image: /single-motion-granular.gif
 layout: center
 ---
 
-# Experimental: WebGPU-Accelerated Audio
+# {{ $t('slide31.heading') }}
 
 <v-click>
-WebGPU brings GPU compute to the browser - perfect for heavy DSP
+{{ $t('slide31.description') }}
 </v-click>
+
+<LanguageSwitcher />
 
 ---
 layout: MyDefault

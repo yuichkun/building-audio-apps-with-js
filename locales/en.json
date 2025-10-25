@@ -124,5 +124,9 @@
     "list3": "I built the UI with Svelte and integrated the WASM module",
     "list4": "Connected UI controls to audio parameters via RNBO API",
     "list5": "WASM delivers near-native performance, much faster than JavaScript"
+  },
+  "slide31": {
+    "heading": "Experimental: WebGPU-Accelerated Audio",
+    "description": "WebGPU brings GPU compute to the browser - perfect for heavy DSP"
   }
 }
