@@ -13,7 +13,7 @@ const wetValue = ref(0)
 // dB scale for volume: -60dB to 0dB
 const MIN_DB = -60
 const MAX_DB = 0
-const volumeDb = ref(-9) // Start at -12dB (reasonable default)
+const volumeDb = ref(MIN_DB) // Start at -12dB (reasonable default)
 
 // Convert dB to linear gain: gain = 10^(dB/20)
 function dbToGain(db: number): number {
