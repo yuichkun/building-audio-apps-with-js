@@ -233,17 +233,21 @@ source.start() // play the source sound
   <SimpleWebAudioButton />
 </div>
 
+<LanguageSwitcher />
+
 ---
 layout: center
 ---
 
-# 👁️ When built-in nodes don't satisfy your needs...
+# {{ $t('slide14.heading') }}
 
 <v-click>
 <div class="pt-8">
-...<code>AudioWorklet</code> to the rescue! 🧑‍🚒
+...<code>AudioWorklet</code> {{ $t('slide14.rescue') }}
 </div>
 </v-click>
+
+<LanguageSwitcher />
 
 ---
 layout: two-cols

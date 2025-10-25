@@ -32,5 +32,9 @@
   "slide12": {
     "heading": "Web Audio APIでシンプルなプレイバック",
     "subtitle": "ローパスフィルター付き"
+  },
+  "slide14": {
+    "heading": "👁️ ビルトインノードでは物足りない時...",
+    "rescue": "が助けてくれます！ 🧑‍🚒"
   }
 }

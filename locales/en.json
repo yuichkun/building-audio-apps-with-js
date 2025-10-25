@@ -32,5 +32,9 @@
   "slide12": {
     "heading": "Simple playback using Web Audio API",
     "subtitle": "with low-pass filter"
+  },
+  "slide14": {
+    "heading": "👁️ When built-in nodes don't satisfy your needs...",
+    "rescue": "to the rescue! 🧑‍🚒"
   }
 }
