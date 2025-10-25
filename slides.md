@@ -258,11 +258,11 @@ layout: two-cols
 <div class="">
   <ul class="flex flex-col gap-2 text-lg">
   <v-clicks>
-    <li>Enables custom audio processing on the audio rendering thread</li>
-    <li>Runs on audio thread (not main thread) = no glitches</li>
-    <li>Two-part architecture: Processor + Node</li>
-    <li>Must load processor module via <code>addModule()</code></li>
-    <li>Use MessagePort for bidirectional communication</li>
+    <li>{{ $t('slide15.list1') }}</li>
+    <li>{{ $t('slide15.list2') }}</li>
+    <li>{{ $t('slide15.list3') }}</li>
+    <li>{{ $t('slide15.list4') }}</li>
+    <li>{{ $t('slide15.list5') }}</li>
   </v-clicks>
   </ul>
 </div>
@@ -275,6 +275,8 @@ layout: two-cols
     Source: <a href="https://developer.chrome.com/blog/audio-worklet" target="_blank">Enter AudioWorklet - Chrome Developers</a>
   </p>
 </div>
+
+<LanguageSwitcher />
 
 ---
 layout: center

@@ -36,5 +36,12 @@
   "slide14": {
     "heading": "👁️ When built-in nodes don't satisfy your needs...",
     "rescue": "to the rescue! 🧑‍🚒"
+  },
+  "slide15": {
+    "list1": "Enables custom audio processing on the audio rendering thread",
+    "list2": "Runs on audio thread (not main thread) = no glitches",
+    "list3": "Two-part architecture: Processor + Node",
+    "list4": "Must load processor module via addModule()",
+    "list5": "Use MessagePort for bidirectional communication"
   }
 }
