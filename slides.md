@@ -46,7 +46,9 @@ layout: MyDefault
 layout: statement
 ---
 
-# Which one to choose? 🤔
+# {{ $t('slide4.heading') }}
+
+<LanguageSwitcher />
 
 ---
 layout: two-cols
