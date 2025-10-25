@@ -566,17 +566,19 @@ image: /juce.png
 layout: MyDefault
 ---
 
-# JUCE + Emscripten in Action
+# {{ $t('slide27.heading') }}
 
 
 <div class="mt-8">
 
-The [juce_emscripten](https://github.com/Dreamtonics/juce_emscripten) project enables JUCE applications to run in browsers via WebAssembly.
+[juce_emscripten](https://github.com/Dreamtonics/juce_emscripten) {{ $t('slide27.description') }}
 
 <a href="https://synthesizerv.com/lab/wasm-juce-demorunner/DemoRunner.html" target="_blank" class="text-xl">
-🎮 Try the live demo
+🎮 {{ $t('slide27.tryDemo') }}
 </a>
 </div>
+
+<LanguageSwitcher />
 
 ---
 layout: image-right

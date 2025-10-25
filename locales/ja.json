@@ -97,5 +97,10 @@
     "list2": "Adobe、Steinberg、Universal Audio、Wavesなどが使用",
     "list3": "クロスプラットフォーム：Windows、macOS、Linux、iOS、Android",
     "list4": "主要なプラグインフォーマットをすべてサポート（VST、AU、AAX）"
+  },
+  "slide27": {
+    "heading": "JUCE + Emscripten の実例",
+    "description": "プロジェクトは、JUCEアプリケーションをWebAssembly経由でブラウザで実行できるようにします。",
+    "tryDemo": "ライブデモを試す"
   }
 }

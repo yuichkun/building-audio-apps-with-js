@@ -97,5 +97,10 @@
     "list2": "Used by Adobe, Steinberg, Universal Audio, Waves, and more",
     "list3": "Cross-platform: Windows, macOS, Linux, iOS, Android",
     "list4": "Supports all major plugin formats (VST, AU, AAX)"
+  },
+  "slide27": {
+    "heading": "JUCE + Emscripten in Action",
+    "description": "project enables JUCE applications to run in browsers via WebAssembly.",
+    "tryDemo": "Try the live demo"
   }
 }
