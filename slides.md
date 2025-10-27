@@ -1,6 +1,7 @@
 ---
 theme: apple-basic
 title: Building Production-Ready Audio Apps with JavaScript
+colorSchema: 'dark'
 drawings:
   persist: false
 defaults:
