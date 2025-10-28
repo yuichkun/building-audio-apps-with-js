@@ -2,7 +2,7 @@
 
 ![screenshot](./screenshot.gif)
 
-[Interactive Demo](https://building-audio-apps-with-js.vercel.app)
+🎵 **Interactive Demo**: https://building-audio-apps-with-js.vercel.app
 
 Created by [slidev](https://sli.dev/).
 
