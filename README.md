@@ -2,14 +2,7 @@
 
 ![screenshot](./screenshot.gif)
 
-
-To start the slide show:
-
-- `pnpm install`
-- `pnpm dev`
-- visit <http://localhost:3030>
-
-Edit the [slides.md](./slides.md) to see the changes.
+[Interactive Demo](https://building-audio-apps-with-js.vercel.app)
 
 Created by [slidev](https://sli.dev/).
 
@@ -42,3 +35,11 @@ Created by [slidev](https://sli.dev/).
   - Convolution reverb
 - 🧪 **Experimental demos**:
   - WebGPU-accelerated convolution reverb
+
+## Run Locally
+
+To start the slide show:
+
+- `pnpm install`
+- `pnpm dev`
+- visit <http://localhost:3030>
