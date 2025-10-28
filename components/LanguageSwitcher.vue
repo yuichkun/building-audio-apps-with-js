@@ -61,6 +61,10 @@ onUnmounted(() => {
           🇯🇵 日本語
           <div v-if="locale === 'ja'" class="i-lucide-check h-4 w-4 check-icon" />
         </button>
+        <button @click="switchLanguage('zh-cn')" class="menu-item" :class="{ selected: locale === 'zh-cn' }">
+          🇨🇳 简体中文
+          <div v-if="locale === 'zh-cn'" class="i-lucide-check h-4 w-4 check-icon" />
+        </button>
       </div>
     </Teleport>
   </div>

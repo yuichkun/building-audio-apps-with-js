@@ -17,6 +17,7 @@ Created by [slidev](https://sli.dev/).
 
 - 🇬🇧 English
 - 🇯🇵 日本語
+- 🇨🇳 中文
 
 ## Key Takeaways
 

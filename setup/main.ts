@@ -2,6 +2,7 @@ import { defineAppSetup } from '@slidev/types'
 import { createI18n } from 'vue-i18n'
 import en from '../locales/en.json'
 import ja from '../locales/ja.json'
+import zhCn from '../locales/zh-cn.json'
 
 const i18n = createI18n({
   legacy: false, // Use Composition API mode
@@ -9,7 +10,8 @@ const i18n = createI18n({
   fallbackLocale: 'en',
   messages: {
     en,
-    ja
+    ja,
+    'zh-cn': zhCn
   }
 })
 
