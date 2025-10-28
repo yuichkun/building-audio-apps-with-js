@@ -37,8 +37,8 @@ class: text-center
 
   <div class="flex flex-col items-center gap-2 mt-4">
     <div class="text-lg opacity-70">GitHub</div>
-    <a href="https://github.com/yuichkun/vue-fes-2025" class="text-blue-400 hover:text-blue-300 transition">
-      github.com/yuichkun/vue-fes-2025
+    <a href="https://github.com/yuichkun/building-audio-apps-with-js" class="text-blue-400 hover:text-blue-300 transition">
+      github.com/yuichkun/building-audio-apps-with-js
     </a>
   </div>
 </div>
